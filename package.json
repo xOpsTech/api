@@ -1,0 +1,25 @@
+{
+  "name": "wpt-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "elasticsearch": "^13.0.0-rc2",
+    "express": "^4.15.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xoperations/webpagetest.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xoperations/webpagetest/issues"
+  },
+  "homepage": "https://github.com/xoperations/webpagetest#readme"
+}
