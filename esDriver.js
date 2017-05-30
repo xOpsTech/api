@@ -32,8 +32,22 @@ module.exports = {
     _index_data('user', 'project', userId, projectObj);
   },
   medianMetric: function (callback) {
+	console.log('reading median metrics');
     var query = { query: { range: { storedTimestamp: { gte: "now-1h" } } }, size: 100 };
      _read_data('wpt', 'median_metrics', query, callback);
+    
+  },
+  allAlerts: function (callback) {
+	console.log('reading alerts');
+    var query = { query: { match_all: {} }, size: 100};
+     _read_data('live_alert_index', 'alert', query, callback);
+    
+  },
+  saveAlerts: function (alertObj) {
+	console.log('save alerts');
+    var alertId = alertObj.eventId;
+	console.log(alertId);
+    _index_data('live_alert_index', 'alert', alertId, alertObj);
     
   }
 }

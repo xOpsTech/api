@@ -2,10 +2,25 @@ var esDriver = require('../esDriver.js');
 var express = require('express');
 var router = express.Router();
 
-router.get('/result', function (req, res) {
+router.get('/results', function (req, res) {
+	console.log('result api');
     esDriver.medianMetric(function (resultJson) {
         res.json(resultJson);
     });
+});
+
+router.get('/alerts', function (req, res) {
+	console.log('alerts api');
+    esDriver.allAlerts(function (resultJson) {
+        res.json(resultJson);
+    });
+});
+
+router.post('/alerts', function (req, res) {
+	console.log('save alerts api');
+	var alertObj = req.body;	
+    esDriver.saveAlerts(alertObj);
+	res.json({status: "success"});
 });
 
 
