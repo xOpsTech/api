@@ -23,6 +23,13 @@ router.post('/alerts', function (req, res) {
 	res.json({status: "success"});
 });
 
+router.put('/alerts', function (req, res) {
+	console.log('update alerts api');
+	var alertObj = {doc: req.body};	
+    esDriver.updateAlerts(alertObj);
+	res.json({status: "success"});
+});
+
 
 // export this router to use in app.js
 module.exports = router;
