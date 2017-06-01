@@ -70,6 +70,12 @@ app.use('/api/', isLoggedIn, apiroute);
 app.get('/', isLoggedIn, routes.index);
 //app.get('/', routes.index);
 app.get('/login', routes.login);
+
+app.get('/alert', routes.index);
+app.get('/dashboard', routes.index);
+app.get('/incident', routes.index);
+app.get('/settings', routes.index);
+
 app.get('/notallowed',endSession ,routes.notallowed);
 app.get('/users', user.list);
 app.get('/logout', function(req, res) {
