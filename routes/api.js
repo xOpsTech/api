@@ -45,7 +45,7 @@ exports.saveUser = function (req, res) {
             });
         }
         console.log("1 record inserted");
-        db_instance.close();
+        // db_instance.close();
         return res.status(201).json({
             message: "record is saved successfully",
             error: false
@@ -54,10 +54,12 @@ exports.saveUser = function (req, res) {
 }
 
 exports.updateUser = function (req, res) {
+    var userId = req.params.userId;
     var userJson = req.body;
     db_instance = db.getConnection()
+    console.log(userId)
     db_instance.collection('users').updateOne(
-        { email: userJson.email },
+        { email: userId },
         { $set: userJson }
         , function (err, remongo_responses) {
             if (err) {
@@ -68,7 +70,7 @@ exports.updateUser = function (req, res) {
                 });
             }
             console.log("1 record updated");
-            db_instance.close();
+            // db_instance.close();
             return res.status(200).json({
                 message: "record is updated successfully",
                 error: false
