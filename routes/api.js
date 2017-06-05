@@ -32,3 +32,46 @@ exports.getUser = function(req, res) {
     }
     res.send(req.user);
 }
+
+exports.saveUser = function (req, res) {
+    var userJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('users').save(userJson, function (err, mongo_response) {
+        if (err) {
+            console.log(err)
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        console.log("1 record inserted");
+        db_instance.close();
+        return res.status(201).json({
+            message: "record is saved successfully",
+            error: false
+        })
+    });
+}
+
+exports.updateUser = function (req, res) {
+    var userJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('users').updateOne(
+        { email: userJson.email },
+        { $set: userJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                JSON.stringify(err)
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        })
+}
