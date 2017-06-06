@@ -25,8 +25,6 @@ exports.uploadFiles = function(req, res) {
 exports.getUser = function(req, res) {
     var email = (req.user.email).toLowerCase();
     var adminList = config.admin;
-    console.log(email);
-    console.log(adminList);
     if (adminList.indexOf(email) > -1) {
         req.user.admin = true;
     }
