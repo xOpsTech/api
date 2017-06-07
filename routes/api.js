@@ -93,3 +93,26 @@ exports.getAllWidgets = function (req, res) {
 
     });
 }
+
+exports.getDbUser = function (req, res) {
+    var userId = req.params.userId;
+    db_instance = db.getConnection()
+
+    var query = { email: userId };
+
+    db_instance.collection("users").find(query).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        // console.log(remongo_responses);
+        return res.status(200).json({
+            message: remongo_responses,
+            error: false
+        })
+
+    });
+}
