@@ -39,7 +39,7 @@ app.set('port', process.env.PORT || 4200);
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'html');
-//app.use(favicon(__dirname + '/public/assets/img/images.ico'));
+app.use(favicon(__dirname + '/public/assets/img/favicon.ico'));
 var jsonParser = bodyParser.json();
 var urlencodedParser = bodyParser.urlencoded({
     extended: false
