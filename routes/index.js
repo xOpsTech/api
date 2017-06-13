@@ -6,10 +6,6 @@ exports.login = function(req, res) {
     res.render('login', { title: 'Express' });
 };
 
-exports.register = function(req, res) {
-    res.render('register', { title: 'Express' });
-};
-
 exports.notallowed = function(req, res) {
     res.render('notallowed', { title: 'Express' });
 };
