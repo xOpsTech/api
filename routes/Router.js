@@ -7,6 +7,8 @@ router.route('/user').post(api.saveUser);
 router.route('/user/:userId').put(api.updateUser);
 router.route('/user/:userId').get(api.getDbUser);
 router.route('/widget').get(api.getAllWidgets);
+
+router.route('/scholastic/services-health').get(api.getServiceHealth);
 // router.route('/user/:userId').get(api.getUser);
 
 router.use(function(req, res) {
