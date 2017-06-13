@@ -6,6 +6,7 @@ var express = require('express'),
     errorhandler = require('errorhandler'),
     routes = require('./routes'),
     passport = require('passport'),
+
     user = require('./routes/user'),
     http = require('http'),
     dbCon = require('./routes/DBConnection'),
@@ -17,10 +18,12 @@ var express = require('express'),
     apiroute = require('./routes/Router'),
     userApi = require('./routes/project.js'),
     testApi = require('./routes/tests.js');
+var mongoose = require('mongoose');
 
-//configuring passport
+var flash    = require('connect-flash');
+
 require('./config/passport')(passport);
-
+require('./config/passport-local')(passport);
 //configuring log4js
 log4js.configure('./config/log4js.json');
 
@@ -38,7 +41,7 @@ global.dbConnection = db.getConnection();
 app.set('port', process.env.PORT || 4200);
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
-app.set('view engine', 'html');
+
 app.use(favicon(__dirname + '/public/assets/img/favicon.ico'));
 var jsonParser = bodyParser.json();
 var urlencodedParser = bodyParser.urlencoded({
@@ -59,7 +62,7 @@ app.use(passport.session());
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(busboy());
-
+app.use(flash());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
@@ -68,13 +71,40 @@ app.use('/test', testApi);
 
 app.use('/api/', isLoggedIn, apiroute);
 app.get('/', isLoggedIn, routes.index);
+app.set('view engine', 'ejs');
+  app.get('/signup', function(req, res) {
+
+app.set('view engine', 'ejs');
+    res.render('signup.ejs', { message: req.flash('signupMessage') });
+});
+app.post('/signup', passport.authenticate('local-signup', {
+    successRedirect : '/login', // redirect to the secure profile section
+    failureRedirect : '/signup',// redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages 
+
+}));
+app.get('/login', function(req, res) {
+
+		// render the page and pass in any flash data if it exists
+		res.render('login.ejs', { message: req.flash('loginMessage') });
+	});
+app.post('/login', passport.authenticate('local-login', {
+    successRedirect : '/', // redirect to the secure profile section
+    failureRedirect : '/login', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+}));
+
 //app.get('/', routes.index);
-app.get('/login', routes.login);
 
 app.get('/alert', routes.index);
 app.get('/dashboard', routes.index);
 app.get('/incident', routes.index);
 app.get('/settings', routes.index);
+
+app.get('/register', function(req, res) {
+  console.log(req.body);
+});
+
 
 app.get('/notallowed',endSession ,routes.notallowed);
 app.get('/users', user.list);
