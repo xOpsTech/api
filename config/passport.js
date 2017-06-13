@@ -4,7 +4,6 @@
 var passport = require('passport');
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var db = require('./../routes/DBConnection');
-
 // load up the user model
 
 // load the auth variables
@@ -49,7 +48,7 @@ module.exports = function(passport) {
             console.log(refreshToken);
             console.log("have2");
             // try to find the user based on their google id
-        	dbCon.collection('users').findOne({ 'id' : profile.id }, function(err, user) {    
+        	dbCon.collection('users').findOne({ 'id' : profile.id }, function(err, user) {
                 if (err)
                     return done(err);
 
@@ -77,7 +76,11 @@ module.exports = function(passport) {
                         return done(null, newUser);
                     });
                 }
-             
+                /*
+		else {
+                	return done(null,false);
+                }
+		*/
             });
         });
 
