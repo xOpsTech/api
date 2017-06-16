@@ -15,9 +15,10 @@ var express = require('express'),
     busboy = require('connect-busboy'),
     session = require('client-sessions'),
     db = require('./routes/DBConnection'),
-    apiroute = require('./routes/Router'),
-    userApi = require('./routes/project.js'),
-    testApi = require('./routes/tests.js');
+    apiroute = require('./routes/Router')
+    // userApi = require('./routes/project.js'),
+    // testApi = require('./routes/tests.js')
+    ;
 var mongoose = require('mongoose');
 
 var flash    = require('connect-flash');
@@ -66,10 +67,11 @@ app.use(flash());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
-app.use('/project', userApi);
-app.use('/test', testApi);
+// app.use('/project', userApi);
+// app.use('/test', testApi);
 
 app.use('/api/', isLoggedIn, apiroute);
+app.use('/api/', apiroute);
 app.get('/', isLoggedIn, routes.index);
 app.set('view engine', 'ejs');
   app.get('/signup', function(req, res) {
