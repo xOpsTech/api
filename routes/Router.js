@@ -13,7 +13,7 @@ router.route('/widget').get(api.getAllWidgets);
 router.route('/scholastic/services-health').get(api.getServiceHealth);
 // router.route('/user/:userId').get(api.getUser);
 
-router.route('/results').get(alertApi.getMetrics);
+router.route('/metrics/wpt').get(alertApi.getMetrics);
 router.route('/alerts').get(alertApi.getAlerts);
 router.route('/alerts').post(alertApi.saveAlerts);
 router.route('/alerts').put(alertApi.updateAlerts);
