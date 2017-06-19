@@ -103,16 +103,16 @@ exports.getIncidents = function (req, res) {
         }
         // console.log('-----------------------------');
         var finalResponse = {};
-        finalResponse['data'] = []
+        finalResponse = []
 
         var aggs_by_active = getStatJson(responseArray[0], active_status_mapping, 'aggs_by_active')
-        finalResponse['data'].push(aggs_by_active);
+        finalResponse.push(aggs_by_active);
 
         var aggs_by_priority = getStatJson(responseArray[1], priority_mapping, 'aggs_by_priority')
-        finalResponse['data'].push(aggs_by_priority);
+        finalResponse.push(aggs_by_priority);
 
         var p1_incidents = gatherP1Numers(responseArray[2], 'p1_incidents')
-        finalResponse['data'].push(p1_incidents);
+        finalResponse.push(p1_incidents);
 
         // console.log('-----------------------------\n', JSON.stringify(finalResponse));
         return res.status(200).json({
