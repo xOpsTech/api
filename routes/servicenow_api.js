@@ -84,6 +84,17 @@ function gatherP1Numers(snResultSet, key) {
     return statJson;
 };
 
+function convertValuesToPercentages(dictToConver) {
+    var dictOfValues = dictToConver.aggs_by_priority;
+    const total = dictOfValues.total;
+    for (var prop in dictOfValues) {
+        if (!dictOfValues.hasOwnProperty(prop) || prop === 'total') {
+            continue;
+        }
+        dictOfValues[prop] = parseFloat((dictOfValues[prop] / parseFloat(total)).toFixed(2));
+    }
+}
+
 exports.getIncidents = function (req, res) {
     var duration = req.query.duration;
     var urls = [
@@ -109,6 +120,7 @@ exports.getIncidents = function (req, res) {
         finalResponse.push(aggs_by_active);
 
         var aggs_by_priority = getStatJson(responseArray[1], priority_mapping, 'aggs_by_priority')
+        convertValuesToPercentages(aggs_by_priority);
         finalResponse.push(aggs_by_priority);
 
         var p1_incidents = gatherP1Numers(responseArray[2], 'p1_incidents')
