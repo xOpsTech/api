@@ -22,6 +22,9 @@ var mongoose = require('mongoose');
 
 var flash    = require('connect-flash');
 
+require('./config/passport-local')(passport);
+require('./config/passport')(passport);
+
 
 //configuring log4js
 log4js.configure('./config/log4js.json');
@@ -47,10 +50,6 @@ var urlencodedParser = bodyParser.urlencoded({
     extended: false
 });
 
-
-
-require('./config/passport')(passport);
-require('./config/passport-local')(passport);
 
 app.use(cookieParser());
 app.use(session({
@@ -102,6 +101,7 @@ app.get('/dashboard', routes.index);
 app.get('/incident', routes.index);
 app.get('/settings', routes.index);
 app.get('/map', routes.index);
+
 
 app.get('/notallowed',endSession ,routes.notallowed);
 app.get('/users', user.list);
