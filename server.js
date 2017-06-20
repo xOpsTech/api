@@ -22,8 +22,7 @@ var mongoose = require('mongoose');
 
 var flash    = require('connect-flash');
 
-require('./config/passport')(passport);
-require('./config/passport-local')(passport);
+
 //configuring log4js
 log4js.configure('./config/log4js.json');
 
@@ -47,6 +46,11 @@ var jsonParser = bodyParser.json();
 var urlencodedParser = bodyParser.urlencoded({
     extended: false
 });
+
+
+
+require('./config/passport')(passport);
+require('./config/passport-local')(passport);
 
 app.use(cookieParser());
 app.use(session({
@@ -84,27 +88,20 @@ app.post('/signup', passport.authenticate('local-signup', {
 
 }));
 app.get('/login', function(req, res) {
-
-		// render the page and pass in any flash data if it exists
-		res.render('login.ejs', { message: req.flash('loginMessage') });
-	});
+    // render the page and pass in any flash data if it exists
+    res.render('login.ejs', { message: req.flash('loginMessage') });
+});
 app.post('/login', passport.authenticate('local-login', {
     successRedirect : '/', // redirect to the secure profile section
     failureRedirect : '/login', // redirect back to the signup page if there is an error
     failureFlash : true // allow flash messages
 }));
 
-//app.get('/', routes.index);
-
 app.get('/alert', routes.index);
 app.get('/dashboard', routes.index);
 app.get('/incident', routes.index);
 app.get('/settings', routes.index);
-
-app.get('/register', function(req, res) {
-  console.log(req.body);
-});
-
+app.get('/map', routes.index);
 
 app.get('/notallowed',endSession ,routes.notallowed);
 app.get('/users', user.list);
@@ -131,6 +128,7 @@ app.get('/previous_route/:requestedurl', function(req,res){
     res.send("done");
 });
 function isLoggedIn(req, res, next) {
+    console.log(req.isAuthenticated());
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated()) {
         req.session.access_token = req.user.token;
@@ -139,23 +137,12 @@ function isLoggedIn(req, res, next) {
             req.session.previousUrl = undefined;
             res.redirect(url);
         } else {
+               
             return next();
         }
 
     } else {
         res.redirect('/login');
-    }
-    // if they aren't redirect them to the home page
-    //
-}
-
-function authenticate(req, res, next) {
-    //googleAuth.googleModule(req);
-    console.log("authenticating");
-    if (!req.user) {
-        res.redirect('/login');
-    } else {
-        next();
     }
 }
 
