@@ -16,13 +16,15 @@ router.route('/scholastic/services-health').get(api.getServiceHealth);
 router.route('/metrics/wpt').get(alertApi.getMetrics);
 router.route('/alerts').get(alertApi.getAlerts);
 router.route('/alerts/stats').get(alertApi.getAlertStats);
+router.route('/alerts/trend').get(alertApi.getAlertTrend);
+
 router.route('/alerts').post(alertApi.saveAlerts);
 router.route('/alerts').put(alertApi.updateAlerts);
 
 router.route('/incidents').get(servicenow.getIncidents);
 router.route('/incidents').post(servicenow.createIncident);
 
-router.use(function(req, res) {
+router.use(function (req, res) {
     res.status('404').send("resource not found").end();
 });
 

@@ -46,6 +46,33 @@ exports.getAlertStats = function (req, res) {
     });
 };
 
+exports.getAlertTrend = function (req, res) {
+    var days = req.query.days;
+    esDriver.alertTrend(days, function (resultJson) {
+        var bucketList = resultJson.aggregations.severity.buckets;
+
+        var finalResult = {
+            alert_trend: { "warning": [], "critical": [] },
+            error: false
+        }
+
+        bucketList.map(function (severityResult) {
+            var severity = severityResult.key;
+            var count_aggs = severityResult.alerts.buckets;
+            if (severity === 3) {
+                finalResult.alert_trend.warning = count_aggs
+            } else if (severity == 4) {
+                finalResult.alert_trend.critical = count_aggs
+            }
+        });
+
+        return res.status(200).json(finalResult);
+
+    });
+};
+
+
+
 exports.saveAlerts = function (req, res) {
     console.log('save alerts api');
     var alertObj = req.body;
