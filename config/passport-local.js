@@ -16,7 +16,6 @@ module.exports = function(passport) {
     // used to deserialize the user
     passport.deserializeUser(function(id, done) {
         db.getConnection().collection('users').findOne({"id":id}, function(err, user) {
-
             done(err, user);
         });
     });
@@ -27,7 +26,7 @@ module.exports = function(passport) {
     // we are using named strategies since we have one for login and one for signup
     // by default, if there was no name, it would just be called 'local'
 
-    passport_local.use('local-signup', new LocalStrategy({
+    passport.use('local-signup', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'id',
         passwordField : 'password',
@@ -84,7 +83,7 @@ module.exports = function(passport) {
 
     }));
 
-      passport_local.use('local-login', new LocalStrategy({
+      passport.use('local-login', new LocalStrategy({
         // by default, local strategy uses username and password, we will override with email
         usernameField : 'id',
         passwordField : 'password',
