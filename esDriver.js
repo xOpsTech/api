@@ -76,6 +76,12 @@ module.exports = {
     _read_data('live_alert_index', 'alert', query, callback);
 
   },
+  allPrograms: function (callback) {
+    console.log('reading alerts');
+    var query = { query: { match_all: {} }, size: 1 };
+    _read_data('program_data', 'program', query, callback);
+
+  },
   alertTrend: function (days, callback) {
     var query = { "query": { "range": { "raisedTimestamp": { "gte": "now-7d/d", "lte": "now/d" } } }, "aggs": { "severity": { "terms": { "field": "severity" }, "aggs": { "alerts": { "date_histogram": { "field": "raisedTimestamp", "interval": "day", "format": "yyyy-MM-dd", "min_doc_count": 0, "extended_bounds": { "min": "now-7d/d", "max": "now/d" } } } } } }, "size": 0 };
     var replacedValue = "now-%sd/d".replace("%s", days);

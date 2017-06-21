@@ -1,6 +1,7 @@
 var express = require('express');
 var api = require("./api");
 var alertApi = require("./alert_api");
+var programApi = require("./product_api");
 var servicenow = require("./servicenow_api")
 
 var router = require('express').Router();
@@ -20,6 +21,8 @@ router.route('/alerts/trend').get(alertApi.getAlertTrend);
 
 router.route('/alerts').post(alertApi.saveAlerts);
 router.route('/alerts').put(alertApi.updateAlerts);
+
+router.route('/programs').get(programApi.getPrograms);
 
 router.route('/incidents').get(servicenow.getIncidents);
 router.route('/incidents').post(servicenow.createIncident);

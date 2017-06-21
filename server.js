@@ -39,7 +39,7 @@ global.searchLog = require('log4js').getLogger("search");
 var app = express();
 global.dbConnection = db.getConnection();
 // all environments
-app.set('port', process.env.PORT || 4200);
+app.set('port', process.env.PORT || 80);
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
