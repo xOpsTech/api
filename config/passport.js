@@ -1,9 +1,9 @@
-/**
- * New node file
- */
-var passport = require('passport');
+
 var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
 var db = require('./../routes/DBConnection');
+var dbCon  = db.getConnection();
+
+
 // load up the user model
 
 // load the auth variables
@@ -65,6 +65,7 @@ module.exports = function(passport) {
                     // set all of the relevant information
                     newUser.id    = profile.id;
                     newUser.token = token;
+                    newUser.login_method = 'byemail';
                     newUser.name  = profile.displayName;
                     newUser.picture = profile.photos[0].value;
                     newUser.email = profile.emails[0].value; // pull the first email
