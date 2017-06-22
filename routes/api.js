@@ -4,6 +4,7 @@ var assert = require('assert');
 var fs = require('fs');
 var busboy = require('connect-busboy');
 var mongodb = require('mongodb');
+var esDriver = require('../esDriver.js');
 
 exports.uploadFiles = function (req, res) {
     appLog.info("File uploaded by " + req.user.name);
@@ -114,5 +115,24 @@ exports.getDbUser = function (req, res) {
             error: false
         })
 
+    });
+}
+
+exports.getServiceHealth = function (req, res) {
+    esDriver.readServiceHealth(function (resultJson) {
+        var bucketList = resultJson.aggregations.metricTypes.buckets;
+        var finalResult = {
+            data: { "services": [] },
+            error: false
+        }
+        bucketList.map(function (serviceResult) {
+            var tags = serviceResult.top_tag_hits.hits.hits[0]._source;
+            finalResult.data.services.push({
+                "service": tags.source,
+                "status": tags.sourceStatus
+            });
+        });
+
+        return res.status(200).json(finalResult);
     });
 }
