@@ -109,7 +109,7 @@ exports.getIncidents = function (req, res) {
         if (err) {
             return res.status(500).json({
                 data: [],
-                error: error
+                error: err
             });
         }
         // console.log('-----------------------------');
