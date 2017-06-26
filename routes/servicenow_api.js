@@ -14,13 +14,16 @@ const active_status_mapping = {
     false: "closed"
 }
 
+// https://stackoverflow.com/questions/27190447/pass-json-to-http-post-request
 function httpRequest(data, callback) {
     if (typeof data.httpMethod === 'undefined') {
         var httpMethod = 'GET';
         var url = data
-    } else {
+        var jsonValue = true;
+    } else if (data.httpMethod === 'POST') {
         var httpMethod = data.httpMethod;
         var url = data.url;
+        var jsonValue = data.body;
     }
 
     const options = {
@@ -30,13 +33,13 @@ function httpRequest(data, callback) {
             user: 'admin',
             pass: 'RootAdmin1!'
         },
-        json: true
+        json: jsonValue
     };
     request(options,
         function (err, res, body) {
             callback(err, body);
         }
-    ).end();
+    );
 };
 
 function getStatJson(snResultSet, mapping, key) {
@@ -134,25 +137,38 @@ exports.getIncidents = function (req, res) {
     })
 };
 
-exports.createIncident = function (req, res) {
-    var incidentObj = req.body;
+// exports.createIncident = function (req, res) {
+//     var incidentObj = req.body;
+//     var url = 'https://dev33740.service-now.com/api/now/table/incident'
+
+//     var data = { url: url, httpMethod: 'POST' }
+//     httpRequest(data, function (err, httpResponse) {
+//         if (err) {
+//             return res.status(500).json({
+//                 error: JSON.stringify(err),
+//                 status: 500
+//             });
+//         }
+//         var result = { number: httpResponse.result.number };
+//         return res.status(201).json({
+//             data: result,
+//             status: 201
+//         });
+//     });
+// };
+
+exports.createIncident = function (incidentObj, cb) {
     var url = 'https://dev33740.service-now.com/api/now/table/incident'
 
-    var data = { url: url, httpMethod: 'POST' }
+    var data = { url: url, httpMethod: 'POST', body: incidentObj }
     httpRequest(data, function (err, httpResponse) {
         if (err) {
-            return res.status(500).json({
-                error: JSON.stringify(err),
-                status: 500
-            });
+            cb(err);
+        } else {
+            var incidentNumber = httpResponse.result.number;
+            cb(null, incidentNumber);
         }
-        var result = { number: httpResponse.result.number };
-        return res.status(201).json({
-            data: result,
-            status: 201
-        });
+
     });
 };
-
-
 

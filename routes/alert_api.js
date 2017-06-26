@@ -1,4 +1,5 @@
 var esDriver = require('../esDriver.js');
+var servicenow = require('./servicenow_api');
 
 const severity_mapping = {
     1: "info",
@@ -85,4 +86,27 @@ exports.updateAlerts = function (req, res) {
     var alertObj = { doc: req.body };
     esDriver.updateAlerts(alertObj);
     res.json({ status: "success" });
+};
+
+exports.createIncident = function (req, res) {
+    // var alertId = req.body.doc.eventId;
+    var alertObj = req.body;
+    var incidentObj = { short_description: 'xops-test' }
+    var incidnetResult = servicenow.createIncident(incidentObj, function (err, incidentNumber) {
+        if (err) {
+            return res.status(500).json({
+                error: JSON.stringify(err),
+                status: 500
+            });
+        };
+
+        alertObj['incidentNumber'] = incidentNumber;
+
+        var alertToUpdate = { doc: alertObj };
+        esDriver.updateAlerts(alertToUpdate);
+        return res.status(200).json({
+            data: alertObj,
+            error: false
+        });
+    });
 };
