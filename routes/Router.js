@@ -25,7 +25,8 @@ router.route('/alerts').put(alertApi.updateAlerts);
 router.route('/programs').get(programApi.getPrograms);
 
 router.route('/incidents').get(servicenow.getIncidents);
-router.route('/incidents').post(servicenow.createIncident);
+// router.route('/incidents').post(servicenow.createIncident);
+router.route('/incidents/_create').post(alertApi.createIncident);
 
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
