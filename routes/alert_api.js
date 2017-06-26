@@ -48,26 +48,55 @@ exports.getAlertStats = function (req, res) {
 };
 
 exports.getAlertTrend = function (req, res) {
-    var days = req.query.days;
-    esDriver.alertTrend(days, function (resultJson) {
-        var bucketList = resultJson.aggregations.severity.buckets;
-
+    var hours = req.query.hours;
+    esDriver.alertTrend(hours, function (resultJson) {
+        // var finalResult = {
+        //     alert_trend: { "warning": [], "critical": [] },
+        //     error: false
+        // }
         var finalResult = {
-            alert_trend: { "warning": [], "critical": [] },
+            alert_trend: { "alertData": [{ "data": [], "label": "Warning", "fill": false }, { "data": [], "label": "Critical", "fill": false }], "alertLabels": [] },
             error: false
         }
 
-        bucketList.map(function (severityResult) {
-            var severity = severityResult.key;
-            var count_aggs = severityResult.alerts.buckets;
-            if (severity === 3) {
-                finalResult.alert_trend.warning = count_aggs
-            } else if (severity == 4) {
-                finalResult.alert_trend.critical = count_aggs
-            }
-        });
+        var alertLabels = [];
+        var warningKeys = [];
+        var criticalKeys = [];
 
-        return res.status(200).json(finalResult);
+        try {
+            var bucketList = resultJson.aggregations.severity.buckets;
+            bucketList.map(function (severityResult) {
+
+                var severity = severityResult.key;
+                var severityBuckets = severityResult.alerts.buckets;
+                if (severity === 3) {
+                    severityBuckets.map(function (severityJson) {
+                        finalResult.alert_trend.alertData[0].data.push(severityJson.doc_count);
+                        warningKeys.push(severityJson.key_as_string);
+                    });
+
+                } else if (severity == 4) {
+                    severityBuckets.map(function (severityJson) {
+                        finalResult.alert_trend.alertData[1].data.push(severityJson.doc_count);
+                        criticalKeys.push(severityJson.key_as_string);
+                    });
+                }
+            });
+
+            if (bucketList.length > 0) {
+                if (warningKeys.length >= criticalKeys.length) {
+                    alertLabels = warningKeys;
+                } else {
+                    alertLabels = criticalKeys;
+                }
+                finalResult.alert_trend.alertLabels = alertLabels;
+            }
+
+            return res.status(200).json(finalResult);
+        } catch (err) {
+            finalResult.error = true;
+            return res.status(500).json(finalResult);
+        }
 
     });
 };
@@ -101,6 +130,7 @@ exports.createIncident = function (req, res) {
         };
 
         alertObj['incidentNumber'] = incidentNumber;
+        alertObj['status'] = 'Incident';
 
         var alertToUpdate = { doc: alertObj };
         esDriver.updateAlerts(alertToUpdate);

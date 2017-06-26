@@ -82,9 +82,9 @@ module.exports = {
     _read_data('program_data', 'program', query, callback);
 
   },
-  alertTrend: function (days, callback) {
-    var query = { "query": { "range": { "raisedTimestamp": { "gte": "now-7d/d", "lte": "now/d" } } }, "aggs": { "severity": { "terms": { "field": "severity" }, "aggs": { "alerts": { "date_histogram": { "field": "raisedTimestamp", "interval": "day", "format": "yyyy-MM-dd", "min_doc_count": 0, "extended_bounds": { "min": "now-7d/d", "max": "now/d" } } } } } }, "size": 0 };
-    var replacedValue = "now-%sd/d".replace("%s", days);
+  alertTrend: function (hours, callback) {
+    var query = {"query":{"range":{"raisedTimestamp":{"gte":"now-6h","lte":"now"}}},"aggs":{"severity":{"terms":{"field":"severity"},"aggs":{"alerts":{"date_histogram":{"field":"raisedTimestamp","interval":"hour","format":"h:mma","min_doc_count":0,"extended_bounds":{"min":"now-6h","max":"now"}}}}}},"size":0};
+    var replacedValue = "now-%sh".replace("%s", hours);
     query.query.range.raisedTimestamp.gte = replacedValue;
     query.aggs.severity.aggs.alerts.date_histogram.extended_bounds.min = replacedValue;
     _read_data('live_alert_index', 'alert', query, callback);
