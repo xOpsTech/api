@@ -1,3 +1,10 @@
+// add this to the VERY top of the first file loaded in your app
+var opbeat = require('opbeat').start({
+  appId: '76df634138',
+  organizationId: 'e3fec2012b8a419b92f0296a608021df',
+  secretToken: '5ad1e8c24a99a4960cfcbc6c12864f6332236bff'
+})
+
 var express = require('express'),
     favicon = require('serve-favicon'),
     bodyParser = require('body-parser'),
@@ -75,6 +82,10 @@ app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 app.use('/api/', isLoggedIn, apiroute);
 app.use('/api/', apiroute);
+
+// Add the Opbeat middleware after your regular middleware
+app.use(opbeat.middleware.express())
+
 app.get('/', isLoggedIn, routes.index);
 app.set('view engine', 'ejs');
   app.get('/signup', function(req, res) {
