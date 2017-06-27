@@ -55,7 +55,7 @@ exports.getAlertTrend = function (req, res) {
         //     error: false
         // }
         var finalResult = {
-            alert_trend: { "datasets": [{ "data": [], "label": "Warning", "fill": false, "borderColor": "#4bc0c0" }, { "data": [], "label": "Critical", "fill": false, "borderColor": "#565656" }], "labels": [] },
+            alert_trend: { "datasets": [{ "data": [], "label": "Warning", "fill": false, "borderColor": "#ffa726" }, { "data": [], "label": "Critical", "fill": false, "borderColor": "#ef5350" }], "labels": [] },
             error: false
         }
 
