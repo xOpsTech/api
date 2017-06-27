@@ -55,7 +55,7 @@ exports.getAlertTrend = function (req, res) {
         //     error: false
         // }
         var finalResult = {
-            alert_trend: { "alertData": [{ "data": [], "label": "Warning", "fill": false }, { "data": [], "label": "Critical", "fill": false }], "alertLabels": [] },
+            alert_trend: { "datasets": [{ "data": [], "label": "Warning", "fill": false, "borderColor": "#4bc0c0" }, { "data": [], "label": "Critical", "fill": false, "borderColor": "#565656" }], "labels": [] },
             error: false
         }
 
@@ -71,13 +71,13 @@ exports.getAlertTrend = function (req, res) {
                 var severityBuckets = severityResult.alerts.buckets;
                 if (severity === 3) {
                     severityBuckets.map(function (severityJson) {
-                        finalResult.alert_trend.alertData[0].data.push(severityJson.doc_count);
+                        finalResult.alert_trend.datasets[0].data.push(severityJson.doc_count);
                         warningKeys.push(severityJson.key_as_string);
                     });
 
                 } else if (severity == 4) {
                     severityBuckets.map(function (severityJson) {
-                        finalResult.alert_trend.alertData[1].data.push(severityJson.doc_count);
+                        finalResult.alert_trend.datasets[1].data.push(severityJson.doc_count);
                         criticalKeys.push(severityJson.key_as_string);
                     });
                 }
@@ -89,7 +89,7 @@ exports.getAlertTrend = function (req, res) {
                 } else {
                     alertLabels = criticalKeys;
                 }
-                finalResult.alert_trend.alertLabels = alertLabels;
+                finalResult.alert_trend.labels = alertLabels;
             }
 
             return res.status(200).json(finalResult);
