@@ -118,6 +118,29 @@ exports.getDbUser = function (req, res) {
     });
 }
 
+exports.getUserList = function (req, res) {
+    db_instance = db.getConnection()
+    db_instance.collection("users").find({}).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+
+        var userObj = [];
+        remongo_responses.map(function (user) {
+            userObj.push({ id: user.id, email: user.email, name: user.name });
+        })
+        return res.status(200).json({
+            data: userObj,
+            error: false
+        })
+
+    });
+}
+
 exports.getServiceHealth = function (req, res) {
     esDriver.readServiceHealth(function (resultJson) {
         var bucketList = resultJson.aggregations.metricTypes.buckets;

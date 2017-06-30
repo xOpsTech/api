@@ -17,7 +17,7 @@ MongoConnection.getConnection = function() {
 
 MongoConnection.InitDb = function() {
     console.log("init db");
-    MongoClient.connect('mongodb://' + '35.184.66.182' + ':' + '27017' + '/' + 'xops', function(err, db) {
+    MongoClient.connect('mongodb://' + '127.0.0.1' + ':' + '27017' + '/' + 'xops', function(err, db) {
         if (err) {
             console.log(err);
         } else {

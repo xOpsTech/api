@@ -20,18 +20,22 @@ function httpRequest(data, callback) {
         var httpMethod = 'GET';
         var url = data
         var jsonValue = true;
+        var user = 'xops.user'
+        var password = 'Summer2017'
     } else if (data.httpMethod === 'POST') {
         var httpMethod = data.httpMethod;
         var url = data.url;
         var jsonValue = data.body;
+        var user = 'admin'
+        var password = 'RootAdmin1!'
     }
 
     const options = {
         url: url,
         method: httpMethod,
         auth: {
-            user: 'admin',
-            pass: 'RootAdmin1!'
+            user: user,
+            pass: password
         },
         json: jsonValue
     };
@@ -101,11 +105,11 @@ function convertValuesToPercentages(dictToConver) {
 exports.getIncidents = function (req, res) {
     var duration = req.query.duration;
     var urls = [
-        'https://dev33740.service-now.com/api/now/stats/incident?sysparm_query=sys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_count=true&sysparm_sum_fields=&sysparm_group_by=active&sysparm_display_value=all'
+        'https://scholasticdev.service-now.com/api/now/stats/incident?sysparm_query=sys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_count=true&sysparm_sum_fields=&sysparm_group_by=active&sysparm_display_value=all'
             .replace(/{duration}/ig, duration),
-        'https://dev33740.service-now.com/api/now/stats/incident?sysparm_query=sys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_count=true&sysparm_sum_fields=&sysparm_group_by=priority&sysparm_display_value=all'
+        'https://scholasticdev.service-now.com/api/now/stats/incident?sysparm_query=sys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_count=true&sysparm_sum_fields=&sysparm_group_by=priority&sysparm_display_value=all'
             .replace(/{duration}/ig, duration),
-        'https://dev33740.service-now.com/api/now/table/incident?sysparm_query=severity%3D1%5Esys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_fields=number&sysparm_limit=1000'
+        'https://scholasticdev.service-now.com/api/now/table/incident?sysparm_query=priority%3D1%5Esys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_fields=number&sysparm_limit=1000'
             .replace(/{duration}/ig, duration)
     ]
     async.map(urls, httpRequest, function (err, responseArray) {
