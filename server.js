@@ -96,7 +96,7 @@ app.set('view engine', 'ejs');
 app.post('/signup', passport.authenticate('local-signup', {
     successRedirect : '/login', // redirect to the secure profile section
     failureRedirect : '/signup',// redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages 
+    failureFlash : true // allow flash messages
 
 }));
 app.get('/login', function(req, res) {
@@ -109,15 +109,15 @@ app.post('/login', passport.authenticate('local-login', {
     failureFlash : true // allow flash messages
 }));
 
-app.get('/alert', routes.index);
-app.get('/dashboard', routes.index);
-app.get('/incident', routes.index);
-app.get('/settings', routes.index);
-app.get('/map', routes.index);
-app.get('/rssfeed', routes.index);
+app.get('/alert', isLoggedIn, routes.index);
+app.get('/dashboard', isLoggedIn, routes.index);
+app.get('/incident', isLoggedIn, routes.index);
+app.get('/settings', isLoggedIn, routes.index);
+app.get('/map', isLoggedIn, routes.index);
+app.get('/rssfeed', isLoggedIn, routes.index);
 
 app.get('/notallowed',endSession ,routes.notallowed);
-app.get('/users', user.list);
+app.get('/users', isLoggedIn, user.list);
 app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
@@ -141,7 +141,10 @@ app.get('/previous_route/:requestedurl', function(req,res){
     res.send("done");
 });
 function isLoggedIn(req, res, next) {
-    console.log(req.isAuthenticated());
+    if (process.env.NODE_ENV === 'dev') {
+        return next();
+    }
+
     // if user is authenticated in the session, carry on
     if (req.isAuthenticated()) {
         req.session.access_token = req.user.token;
@@ -150,7 +153,7 @@ function isLoggedIn(req, res, next) {
             req.session.previousUrl = undefined;
             res.redirect(url);
         } else {
-               
+
             return next();
         }
 
