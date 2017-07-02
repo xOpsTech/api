@@ -14,6 +14,15 @@ const active_status_mapping = {
     false: "closed"
 }
 
+function timeToMiilis(hours, minutes, seconds) {
+    return hours * 3600000 + minutes * 60000 + seconds * 1000;
+}
+
+function strTimeToMillis(strTime) {
+    var timeParts = strTime.split(" ")[1].split(":");
+    return timeToMiilis(timeParts[0], timeParts[1], timeParts[2]);
+}
+
 // https://stackoverflow.com/questions/27190447/pass-json-to-http-post-request
 function httpRequest(data, callback) {
     if (typeof data.httpMethod === 'undefined') {
@@ -91,6 +100,50 @@ function gatherP1Numers(snResultSet, key) {
     return statJson;
 };
 
+function getSlaStats(slaResultSet, key) {
+    var slaResultSet = slaResultSet;
+    var key = key;
+
+    var missedSlaCount = 0;
+    var aboutTomissSlaCount = 0;
+    var statJson = {};
+    statJson[key] = {};
+
+    var resultList = slaResultSet.result;
+
+    if (typeof resultList === 'undefined' || resultList.length < 0) {
+        return statJson;
+    }
+
+    slaResultSet.result.map(function (slaResult) {
+        var hasBreached = slaResult.has_breached;
+        var stage = slaResult.stage;
+        if (stage !== "cancelled") {
+            if (hasBreached === "true") {
+                missedSlaCount += 1;
+            } else {
+                var startTime = new Date(slaResult.start_time);
+                var plannedEndTime = new Date(slaResult.planned_end_time);
+                var duration = slaResult.duration;
+                const slaThreshold = 0.75;
+
+                var durationInMillis = strTimeToMillis(duration);
+
+                var totalMIllis = plannedEndTime.getTime() - startTime.getTime();
+                var elapsedTimeRatio = parseFloat(durationInMillis / totalMIllis).toFixed(2);
+
+                if (elapsedTimeRatio >= slaThreshold) {
+                    aboutTomissSlaCount += 1;
+                }
+            }
+        }
+
+    });
+    statJson[key]['missedSlaCount'] = missedSlaCount;
+    statJson[key]['aboutTomissSlaCount'] = aboutTomissSlaCount;
+    return statJson;
+};
+
 function convertValuesToPercentages(dictToConver) {
     var dictOfValues = dictToConver.aggs_by_priority;
     const total = dictOfValues.total;
@@ -110,6 +163,8 @@ exports.getIncidents = function (req, res) {
         'https://scholasticdev.service-now.com/api/now/stats/incident?sysparm_query=sys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_count=true&sysparm_sum_fields=&sysparm_group_by=priority&sysparm_display_value=all'
             .replace(/{duration}/ig, duration),
         'https://scholasticdev.service-now.com/api/now/table/incident?sysparm_query=priority%3D1%5Esys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_fields=number&sysparm_limit=1000'
+            .replace(/{duration}/ig, duration),
+        'https://scholasticdev.service-now.com/api/now/table/task_sla?sysparm_query=priority%3D1%5Esys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)'
             .replace(/{duration}/ig, duration)
     ]
     async.map(urls, httpRequest, function (err, responseArray) {
@@ -132,6 +187,9 @@ exports.getIncidents = function (req, res) {
 
         var p1_incidents = gatherP1Numers(responseArray[2], 'p1_incidents')
         finalResponse.push(p1_incidents);
+
+        var sla_stats = getSlaStats(responseArray[3], 'sla_stats')
+        finalResponse.push(sla_stats);
 
         // console.log('-----------------------------\n', JSON.stringify(finalResponse));
         return res.status(200).json({
