@@ -105,7 +105,7 @@ function getSlaStats(slaResultSet, key) {
     var key = key;
 
     var missedSlaCount = 0;
-    var aboutTomissSlaCount = 0;
+    var aboutToMissSlaCount = 0;
     var statJson = {};
     statJson[key] = {};
 
@@ -133,14 +133,14 @@ function getSlaStats(slaResultSet, key) {
                 var elapsedTimeRatio = parseFloat(durationInMillis / totalMIllis).toFixed(2);
 
                 if (elapsedTimeRatio >= slaThreshold) {
-                    aboutTomissSlaCount += 1;
+                    aboutToMissSlaCount += 1;
                 }
             }
         }
 
     });
     statJson[key]['missedSlaCount'] = missedSlaCount;
-    statJson[key]['aboutTomissSlaCount'] = aboutTomissSlaCount;
+    statJson[key]['aboutToMissSlaCount'] = aboutToMissSlaCount;
     return statJson;
 };
 
