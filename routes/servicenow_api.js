@@ -227,8 +227,14 @@ exports.createIncident = function (incidentObj, cb) {
         if (err) {
             cb(err);
         } else {
-            var incidentNumber = httpResponse.result.number;
-            cb(null, incidentNumber);
+            try {
+                var incidentNumber = httpResponse.result.number;
+                cb(null, incidentNumber);
+            } catch (err) {
+                cb('servicenow error');
+            }
+
+
         }
 
     });
