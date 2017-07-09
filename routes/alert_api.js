@@ -140,3 +140,21 @@ exports.createIncident = function (req, res) {
         });
     });
 };
+
+exports.count = function (req, res) {
+    var reqObj = req.body;
+    esDriver.alertCount(reqObj, function (err, esResponse) {
+        if (err) {
+            return res.status(500).json({
+                error: err,
+                status: 500
+            });
+        };
+
+        return res.status(200).json({
+            data: {"count": esResponse.count},
+            error: false
+        });
+    })
+
+};
