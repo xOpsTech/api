@@ -22,6 +22,7 @@ router.route('/alerts/trend').get(alertApi.getAlertTrend);
 
 router.route('/alerts').post(alertApi.saveAlerts);
 router.route('/alerts').put(alertApi.updateAlerts);
+router.route('/alerts/_count').post(alertApi.count);
 
 router.route('/programs').get(programApi.getPrograms);
 

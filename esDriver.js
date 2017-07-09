@@ -35,6 +35,18 @@ var _read_data = function (_index, _type, query, callback) {
   });
 };
 
+var _count = function (_index, _type, query, callback) {
+  client.count({
+    index: _index,
+    type: _type,
+    body: query
+  }).then(function (resp) {
+    callback(null, resp);
+  }, function (err) {
+    console.trace(err.message);
+    callback(err);
+  });
+};
 
 module.exports = {
   addProject: function (projectObj) {
@@ -89,5 +101,14 @@ module.exports = {
     query.aggs.severity.aggs.alerts.date_histogram.extended_bounds.min = replacedValue;
     _read_data('live_alert_index', 'alert', query, callback);
 
+  },
+  alertCount: function (reqObj, callback) {
+    var by_field = reqObj.by.field;
+    var by_value = reqObj.by.value;
+    var what_field = reqObj.what.field;
+    var what_value = reqObj.what.value;
+    // var query = {"by":{"field":by_field,"value":by_value},"what":{"field":what_field,"value":what_value}};
+    var query = `{"query":{"bool":{"must":[{"term":{"${by_field}":{"value":"${by_value}"}}},{"term":{"${what_field}":{"value":"${what_value}"}}}]}}}`;
+    _count('live_alert_index', 'alert', query, callback);
   }
 }
