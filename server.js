@@ -77,9 +77,6 @@ app.use(flash());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
-// app.use('/project', userApi);
-// app.use('/test', testApi);
-
 app.use('/api/', isLoggedIn, apiroute);
 app.use('/api/', apiroute);
 
@@ -109,12 +106,13 @@ app.post('/login', passport.authenticate('local-login', {
     failureFlash : true // allow flash messages
 }));
 
-app.get('/alert', isLoggedIn, routes.index);
+/*app.get('/alert', isLoggedIn, routes.index);
 app.get('/dashboard', isLoggedIn, routes.index);
 app.get('/incident', isLoggedIn, routes.index);
 app.get('/settings', isLoggedIn, routes.index);
 app.get('/map', isLoggedIn, routes.index);
 app.get('/rssfeed', isLoggedIn, routes.index);
+*/
 
 app.get('/notallowed',endSession ,routes.notallowed);
 app.get('/users', isLoggedIn, user.list);
