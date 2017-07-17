@@ -240,3 +240,19 @@ exports.createIncident = function (incidentObj, cb) {
     });
 };
 
+exports.getIncidentStats = function (req, res) {
+    var duration = req.query.duration;
+    var finalResponse = {
+        open_p1: [1, 2, 3, 4, 5, 6, 8, 12, 3, 4, 6, 7],
+        open: [8, 6, 5, 2, 3, 3, 1, 1, 2, 3, 4, 5],
+        closed: [3, 2, 5, 7, 8, 8, 1, 8, 6, 5, 2, 3],
+        about_to_miss_sla: [11, 6, 5, 4, 5, 6, 8, 8, 6, 5, 2, 3],
+        missed_sla: [10, 6, 5, 4, 5, 6, 1, 8, 6, 5, 2, 3]
+    }
+
+    return res.status(200).json({
+            data: finalResponse,
+            error: false
+        });
+}
+
