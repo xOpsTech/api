@@ -27,6 +27,7 @@ router.route('/alerts/_count').post(alertApi.count);
 router.route('/programs').get(programApi.getPrograms);
 
 router.route('/incidents').get(servicenow.getIncidents);
+router.route('/incidents/stats').get(servicenow.getIncidentStats);
 // router.route('/incidents').post(servicenow.createIncident);
 router.route('/incidents/_create').post(alertApi.createIncident);
 
