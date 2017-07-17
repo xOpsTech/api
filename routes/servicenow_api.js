@@ -242,13 +242,33 @@ exports.createIncident = function (incidentObj, cb) {
 
 exports.getIncidentStats = function (req, res) {
     var duration = req.query.duration;
-    var finalResponse = {
-        open_p1: [1, 2, 3, 4, 5, 6, 8, 12, 3, 4, 6, 7],
-        open: [8, 6, 5, 2, 3, 3, 1, 1, 2, 3, 4, 5],
-        closed: [3, 2, 5, 7, 8, 8, 1, 8, 6, 5, 2, 3],
-        about_to_miss_sla: [11, 6, 5, 4, 5, 6, 8, 8, 6, 5, 2, 3],
-        missed_sla: [10, 6, 5, 4, 5, 6, 1, 8, 6, 5, 2, 3]
+
+    if (duration === "44640") {
+        var finalResponse = {
+            open_p1: [1, 2, 3, 4, 5, 6, 8, 12, 3, 4, 6, 7],
+            open: [8, 6, 5, 2, 3, 3, 1, 1, 2, 3, 4, 5],
+            closed: [3, 2, 5, 7, 8, 8, 1, 8, 6, 5, 2, 3],
+            about_to_miss_sla: [11, 6, 5, 4, 5, 6, 8, 8, 6, 5, 2, 3],
+            missed_sla: [10, 6, 5, 4, 5, 6, 1, 8, 6, 5, 2, 3]
+        };
+    } else if (duration === "10080") {
+        var finalResponse = {
+            open_p1: [1, 2, 3, 4],
+            open: [8, 6, 5, 2],
+            closed: [3, 2, 5, 7],
+            about_to_miss_sla: [11, 6, 5, 4],
+            missed_sla: [10, 6, 5, 4]
+        };
+    } else {
+        var finalResponse = {
+            open_p1: [1, 2, 3, 4, 5, 6, 8],
+            open: [8, 6, 5, 2, 3, 3, 1],
+            closed: [3, 2, 5, 7, 8, 8, 1],
+            about_to_miss_sla: [11, 6, 5, 4, 5, 6, 8],
+            missed_sla: [10, 6, 5, 4, 5, 6, 1]
+        };
     }
+
 
     return res.status(200).json({
             data: finalResponse,
