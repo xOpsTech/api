@@ -8,6 +8,7 @@ var router = require('express').Router();
 router.route('/user').get(api.getUser);
 router.route('/user/_list').get(api.getUserList);
 router.route('/user').post(api.saveUser);
+router.route('/tenant').post(api.saveTenant);   
 router.route('/user/:userId').put(api.updateUser);
 router.route('/user/:userId').get(api.getDbUser);
 router.route('/widget').get(api.getAllWidgets);

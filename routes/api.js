@@ -6,6 +6,8 @@ var busboy = require('connect-busboy');
 var mongodb = require('mongodb');
 var esDriver = require('../esDriver.js');
 
+var Tenant = require('../models/tenant.js');
+
 exports.uploadFiles = function (req, res) {
     appLog.info("File uploaded by " + req.user.name);
     var fstream;
@@ -157,5 +159,28 @@ exports.getServiceHealth = function (req, res) {
         });
 
         return res.status(200).json(finalResult);
+    });
+}
+
+exports.saveTenant = function (req, res) {
+    var tenantJson = req.body;
+    var newTenant = Tenant(tenantJson);
+    newTenant.save(function (err, newTenant) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                result: {
+                    message: err
+                },
+                error: true
+            });
+        }
+        // db_instance.close();
+        return res.status(201).json({
+            result: {
+                tenantId: newTenant.id
+            },
+            error: false
+        })
     });
 }
