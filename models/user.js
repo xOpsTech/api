@@ -12,6 +12,7 @@ var userSchema = mongoose.Schema({
         lastname     : String,
         password     : String,
         login_method : String,
+        tenantId : String,
         personalization : {
         timezone : String,
         theme : String,

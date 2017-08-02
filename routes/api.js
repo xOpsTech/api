@@ -184,3 +184,51 @@ exports.saveTenant = function (req, res) {
         })
     });
 }
+
+exports.getTenantByUserId = function (req, res) {
+    var userId = req.params.userId;
+    db_instance = db.getConnection()
+
+    var query = { email: userId };
+
+    db_instance.collection("users").findOne(query, function (err, remongo_responses) {
+        if (err || !remongo_responses) {
+            console.log(err);
+            return res.status(404).json({
+                result: {
+                    message: err
+                },
+                error: true
+            });
+        }
+
+        var tenantId = remongo_responses.tenantId;
+
+        Tenant.findOne({ id: tenantId }, function (err, tenant) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    result: {
+                        message: err
+                    },
+                    error: true
+                });
+            }
+
+            // console.log(remongo_responses);
+            return res.status(200).json({
+                result: {
+                    tenant
+                },
+                error: false
+            })
+
+        })
+
+
+    });
+
+
+
+
+}
