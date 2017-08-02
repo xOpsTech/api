@@ -15,8 +15,9 @@ exports.getMetrics = function (req, res) {
 };
 
 exports.getAlerts = function (req, res) {
+    var tenantId = req.params.tenantId;
     console.log('alerts api');
-    esDriver.allAlerts(function (resultJson) {
+    esDriver.allAlerts(tenantId, function (resultJson) {
         res.json(resultJson.hits.hits);
     });
 };
