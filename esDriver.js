@@ -59,6 +59,11 @@ module.exports = {
     _read_data('wpt', 'median_metrics', query, callback);
 
   },
+    myAlerts: function (assignedToId,callback) {
+    console.log('reading my alerts');
+    var query = `{"query": {"term": {"assignedToId":"${assignedToId}"}}, "size": 100}`;
+    _read_data('live_alert_index', 'alert', query, callback);
+  },
   allAlerts: function (tenantId, callback) {
     console.log('reading alerts');
     var query = { query: { match_all: {} }, size: 100 };
