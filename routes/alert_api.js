@@ -13,7 +13,19 @@ exports.getMetrics = function (req, res) {
         res.json(resultJson.hits.hits);
     });
 };
+exports.myAlerts = function (req, res) {
+    var assignedToId = req.query.assignedToId;
+    console.log(req.query);
+    esDriver.myAlerts(assignedToId, function (resultJson) {
+        try {
+            return res.status(200).json(resultJson.hits.hits);
+        } catch (err) {
+            resultJson.error = true;
+            return res.status(500).json(resultJson.hits.hits);
+        }
+    });
 
+};
 exports.getAlerts = function (req, res) {
     var tenantId = req.params.tenantId;
     console.log('alerts api');
@@ -153,7 +165,7 @@ exports.count = function (req, res) {
         };
 
         return res.status(200).json({
-            data: {"count": esResponse.count},
+            data: { "count": esResponse.count },
             error: false
         });
     })
