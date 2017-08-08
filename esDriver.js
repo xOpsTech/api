@@ -65,6 +65,11 @@ module.exports = {
     _read_data('live_alert_index', 'alert', query, callback);
 
   },
+  myAlerts: function (assignedToId, callback) {
+    console.log('reading my alerts');
+    var query = `{"query": {"term": {"assignedToId":"${assignedToId}"}}, "size": 100}`;
+    _read_data('live_alert_index', 'alert', query, callback);
+  },
   allTenantAlerts: function (tenantId, callback) {
     console.log('reading alerts');
     var query = { query: { match_all: {} }, size: 100 };
@@ -101,7 +106,7 @@ module.exports = {
 
   },
   alertTrend: function (hours, callback) {
-    var query = {"query":{"range":{"raisedTimestamp":{"gte":"now-6h","lte":"now"}}},"aggs":{"severity":{"terms":{"field":"severity"},"aggs":{"alerts":{"date_histogram":{"field":"raisedTimestamp","interval":"hour","format":"h:mma","min_doc_count":0,"extended_bounds":{"min":"now-6h","max":"now"}}}}}},"size":0};
+    var query = { "query": { "range": { "raisedTimestamp": { "gte": "now-6h", "lte": "now" } } }, "aggs": { "severity": { "terms": { "field": "severity" }, "aggs": { "alerts": { "date_histogram": { "field": "raisedTimestamp", "interval": "hour", "format": "h:mma", "min_doc_count": 0, "extended_bounds": { "min": "now-6h", "max": "now" } } } } } }, "size": 0 };
     var replacedValue = "now-%sh".replace("%s", hours);
     query.query.range.raisedTimestamp.gte = replacedValue;
     query.aggs.severity.aggs.alerts.date_histogram.extended_bounds.min = replacedValue;

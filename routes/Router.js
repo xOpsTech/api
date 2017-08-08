@@ -22,6 +22,7 @@ router.route('/alerts').get(alertApi.getAlerts);
 router.route('/alerts/:tenantId').get(alertApi.getTenantAlerts);
 router.route('/alerts/stats').get(alertApi.getAlertStats);
 router.route('/alerts/trend').get(alertApi.getAlertTrend);
+router.route('/alerts/myalerts').get(alertApi.myAlerts);
 
 router.route('/alerts').post(alertApi.saveAlerts);
 router.route('/alerts').put(alertApi.updateAlerts);
