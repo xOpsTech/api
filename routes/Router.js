@@ -18,7 +18,8 @@ router.route('/scholastic/services-health').get(api.getServiceHealth);
 // router.route('/user/:userId').get(api.getUser);
 
 router.route('/metrics/wpt').get(alertApi.getMetrics);
-router.route('/alerts/:tenantId').get(alertApi.getAlerts);
+router.route('/alerts').get(alertApi.getAlerts);
+router.route('/alerts/:tenantId').get(alertApi.getTenantAlerts);
 router.route('/alerts/stats').get(alertApi.getAlertStats);
 router.route('/alerts/trend').get(alertApi.getAlertTrend);
 
@@ -28,7 +29,8 @@ router.route('/alerts/_count').post(alertApi.count);
 
 router.route('/programs').get(programApi.getPrograms);
 
-router.route('/incidents/:tenantId').get(servicenow.getIncidents);
+router.route('/incidents').get(servicenow.getIncidents);
+router.route('/incidents/:tenantId').get(servicenow.getTenantIncidents);
 router.route('/incidents/stats').get(servicenow.getIncidentStats);
 // router.route('/incidents').post(servicenow.createIncident);
 router.route('/incidents/_create').post(alertApi.createIncident);
