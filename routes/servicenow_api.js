@@ -155,7 +155,7 @@ function convertValuesToPercentages(dictToConver) {
     }
 }
 
-exports.getIncidentsOriginal = function (req, res) {
+exports.getIncidents = function (req, res) {
     var duration = req.query.duration;
     var urls = [
         'https://scholasticdev.service-now.com/api/now/stats/incident?sysparm_query=sys_created_onONLast%20{duration}%20minutes%40javascript%3Ags.minutesAgoStart({duration})%40javascript%3Ags.minutesAgoEnd(0)&sysparm_count=true&sysparm_sum_fields=&sysparm_group_by=active&sysparm_display_value=all'
@@ -199,7 +199,7 @@ exports.getIncidentsOriginal = function (req, res) {
     })
 };
 
-exports.getIncidents = function (req, res) {
+exports.getTenantIncidents = function (req, res) {
     var tenantId = req.params.tenantId;
 
     if (tenantId === 'hkpxasc8b') {

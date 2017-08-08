@@ -27,9 +27,16 @@ exports.myAlerts = function (req, res) {
 
 };
 exports.getAlerts = function (req, res) {
+    console.log('alerts api');
+    esDriver.allAlerts(function (resultJson) {
+        res.json(resultJson.hits.hits);
+    });
+};
+
+exports.getTenantAlerts = function (req, res) {
     var tenantId = req.params.tenantId;
     console.log('alerts api');
-    esDriver.allAlerts(tenantId, function (resultJson) {
+    esDriver.allTenantAlerts(tenantId, function (resultJson) {
         res.json(resultJson.hits.hits);
     });
 };
