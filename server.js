@@ -22,7 +22,8 @@ var express = require('express'),
     busboy = require('connect-busboy'),
     session = require('client-sessions'),
     db = require('./routes/DBConnection'),
-    apiroute = require('./routes/Router')
+    apiroute = require('./routes/Router'),
+    cors = require('cors')
     // userApi = require('./routes/project.js'),
     // testApi = require('./routes/tests.js')
     ;
@@ -46,6 +47,7 @@ global.deleteLog = require('log4js').getLogger("delete");
 global.searchLog = require('log4js').getLogger("search");
 
 var app = express();
+app.use(cors());
 global.dbConnection = db.getConnection();
 // all environments
 app.set('port', process.env.PORT || 4200);
