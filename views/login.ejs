@@ -4,144 +4,8 @@
 <head>
 	<meta charset="UTF-8">
 	<title>xOps Login</title>
-	<!--<link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/register.css">-->
-	<style>
-		body, html {
-    height: 100%;
-    margin: 0;
-}
-		.container {
-
-			height: 100%;
-			width: 100%;
-			background-image: url('/assets/img/login-background.png');
-			color: #fff;
-			font-family: "Comfortaa", "Helvetica", sans-serif;
-    /* Full height */
-    height: 100%; 
-
-    /* Center and scale the image nicely */
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-		}
-
-
-		.login {
-			max-width: 350px;
-			min-height: 500px;
-			opacity: 1;
-			margin: 10% auto;
-			background-color: rgba(10, 10, 10, .68);
-		}
-
-		.login-icon-field {
-			height: 150px;
-			width: 100%;
-			text-align: center;
-			padding: 8px 20px 20px;
-		}
-
-		.login-icon {
-			margin: 50px 65px;
-		}
-
-		.login-form {
-			padding: 8px 20px 20px;
-			height: 120px;
-			width: 100%;
-		}
-
-		.username-row {
-			position: relative;
-			height: 40px;
-			margin-bottom: 10px;
-		}
-
-		.password-row {
-			position: relative;
-			height: 40px;
-		}
-
-		.password-icon,
-		.user-icon {
-			margin: 5px;
-		}
-
-		input {
-			position: absolute;
-			width: 295px;
-			height: 30px;
-			margin: 5px 0;
-			border: none;
-			padding-right: 10px;
-		}
-
-		input:focus,
-		button:focus {
-			outline: none;
-		}
-
-		input::-webkit-input-placeholder {
-			color: grey;
-		}
-
-		input::-moz-placeholder {
-			color:grey;
-		}
-
-		.call-to-action {
-			margin: 22px 0;
-			height: 130px;
-			width: 100%;
-			/*background-color: blue;*/
-		}
-
-		button {
-			display: block;
-			width: 240px;
-			height: 40px;
-			padding: 0;
-			margin: 10px 60px 10px;
-			font-weight: 700;
-			color: #fff;
-			background-color: #952206;
-			border: none;
-			border-radius: 0px;
-			-webkit-user-select: none;
-			-moz-user-select: none;
-			-ms-user-select: none;
-			user-select: none;
-		}
-
-		button:hover {
-			background-color: #E14924;
-		}
-
-		button:active {
-			background-color: #E14924;
-		}
-
-		p {
-			display: inline-block;
-			width: 200px;
-			margin: 0 40px;
-			font-size: .8rem;
-			color: rgba(255, 255, 255, .4);
-		}
-
-	 a {
-			color: #4169E1;
-		}
-
-		label,
-		p a:hover {
-			-webkit-cursor: pointer;
-			cursor: pointer;
-		}
-	</style>
-
+	<link rel="stylesheet" href="/assets/css/style.css">
+	<link rel="stylesheet" href="assets/css/login.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 	<script type="text/javascript">
 		var urlReq = document.location.href;
@@ -158,38 +22,71 @@
 </head>
 
 <body ng-app="validationlogin" ng-controller="mainController" class="container">
-	<form action="/login" method="post" ng-submit="submitForm(loginForm.$valid)" name="loginForm" novalidate>
-		<div >
-			<% if (message.length > 0) { %>
+	<div class="wrapper">
+		<div class="container">
+				<div class="row">
+						<div class="col-md-12 m-x-auto pull-xs-none vamiddle">
+			<form action="/login" method="post" ng-submit="submitForm(loginForm.$valid)" name="loginForm" novalidate>
+				<div>
+					<% if (message.length > 0) { %>
 						<div class="alert alert-danger">
 							<%= message %>
 						</div>
 						<% } %>
-			<div id="login" class="login">
-				<div class="login-icon-field">
-					<h1>Login</h1>
-						<div>New User? <a href="/signup">Register Now</a></div>
-				</div>
-			
-				<div class="login-form">
-					<div class="username-row">
-						<input type="text"  class="username-input" name="id"  ng-model="user.id" required placeholder="Username">
-					</div>
-					<div class="password-row">
-						<input type="password"  class="password-input" name="password"  ng-model="password"  required class="input" placeholder="Password">
-					</div>
-					<p><a>Forget password?</a></p>
-				</div>
-				<div class="call-to-action">
-					<button id="login-button"  type="submit">Login</button>
-					<button id="login-button" onclick="location.href='/auth/google';" type="button">Login with Google</button>
+							<div id="login" class="login">
+								<div class="login-icon-field">
+									<h1>Login</h1>
+									<div>New User? <a href="/signup">Register Now</a></div>
+								</div>
 
+								<div class="login-form">
+									<div class="form-group">
+										<input type="text" name="username" class="form-control" name="id" ng-model="user.id" required placeholder="Username">
+										<div ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="alert alert-danger">
+											Enter a valid Username.
+										</div>
+									</div>
+									<div class="form-group">
+										<input type="password" name="password" class="form-control" ng-model="password" required placeholder="Password">
+										<div ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="alert alert-danger">
+											Password required.
+										</div>
+									</div>
+									<a href="/signup">Forget password?</a>
+								</div>
+								<div class="call-to-action">
+									<div class="form-group">
+										<button id="login-button" class="btn-danger" ng-disabled="loginForm.user.$dirty && loginForm.user.$invalid" type="submit">Login</button>
+									</div>
+									<div class="form-group">
+										<button id="login-button" class="btn-danger" onclick="location.href='/auth/google';" type="button">Login with Google</button>
+									</div>
+
+
+
+								</div>
+							</div>
 				</div>
-			</div>
+
 		</div>
-
+		</form>
 		</div>
-
+		</div>
+	</div>
+	</div>
 </body>
+<script>
+		var validationlogin = angular.module('validationlogin', []);
+		// create angular controller
+		validationlogin.controller('mainController', function ($scope) {
+			// function to submit the form after all validation has occurred            
+			$scope.submitForm = function (isValid) {
+				// check to make sure the form is completely valid
+				if (isValid) {
+				}
+			};
+		});
+
+</script>
 
 </html>
