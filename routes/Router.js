@@ -3,6 +3,7 @@ var api = require("./api");
 var alertApi = require("./alert_api");
 var programApi = require("./product_api");
 var servicenow = require("./servicenow_api")
+var healthConfigs = require("./health_configs")
 
 var router = require('express').Router();
 router.route('/user').get(api.getUser);
@@ -35,6 +36,10 @@ router.route('/incidents/:tenantId').get(servicenow.getTenantIncidents);
 router.route('/incidents/stats').get(servicenow.getIncidentStats);
 // router.route('/incidents').post(servicenow.createIncident);
 router.route('/incidents/_create').post(alertApi.createIncident);
+
+router.route('/health_configs/perf_indicators/:tenantId').get(healthConfigs.getHealthConfigs);
+router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.saveItemIndicators);
+router.route('/health_configs/item_status/:tenantId').get(healthConfigs.getItemStatus);
 
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
