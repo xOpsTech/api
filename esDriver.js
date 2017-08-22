@@ -121,5 +121,17 @@ module.exports = {
     // var query = {"by":{"field":by_field,"value":by_value},"what":{"field":what_field,"value":what_value}};
     var query = `{"query":{"bool":{"must":[{"term":{"${by_field}":{"value":"${by_value}"}}},{"term":{"${what_field}":{"value":"${what_value}"}}}]}}}`;
     _count('live_alert_index', 'alert', query, callback);
+  },
+  healthConfigs: function (tenantId, callback) {
+    var query = { query: { match_all: {} }, _source: ["id"], size: 100 };
+    _read_data(['perf_indicators_' + tenantId, 'item_indicators_' + tenantId],'configs' , query, callback);
+
+  },
+  addItemIndicators: function (tenantId, itemObj) {
+    _index_data('item_indicators_' + tenantId, 'configs', itemObj.id, itemObj);
+  },
+  getItemStatus: function (tenantId, callback) {
+    var query = { query: { match_all: {} }, size: 100 };
+    _read_data('item_status_' + tenantId, 'metrics', query, callback);
   }
 }
