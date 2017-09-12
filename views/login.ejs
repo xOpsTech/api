@@ -7,17 +7,6 @@
 	<link rel="stylesheet" href="/assets/css/style.css">
 	<link rel="stylesheet" href="assets/css/login.css">
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-	<script type="text/javascript">
-		var urlReq = document.location.href;
-		$.ajax({
-			url: '/previous_route/' + encodeURIComponent(urlReq),
-			dataType: 'jsonp',
-			success: function (data) {
-				console.log(data);
-			},
-			type: 'GET'
-		});;
-	</script>
 
 </head>
 
@@ -36,12 +25,12 @@
 							<div id="login" class="login">
 								<div class="login-icon-field">
 									<h1>Login</h1>
-									<div>New User? <a href="/signup">Register Now</a></div>
+									<div>New User? <a href="/#/signup">Register Now</a></div>
 								</div>
 
 								<div class="login-form">
 									<div class="form-group">
-										<input type="text" name="username" class="form-control" name="id" ng-model="user.id" required placeholder="Username">
+										<input type="text"  class="form-control" name="id" ng-model="user.id" required placeholder="Username">
 										<div ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="alert alert-danger">
 											Enter a valid Username.
 										</div>
@@ -52,7 +41,7 @@
 											Password required.
 										</div>
 									</div>
-									<a href="/signup">Forget password?</a>
+									<a href="/signup">Forgot your password?</a>
 								</div>
 								<div class="call-to-action">
 									<div class="form-group">
