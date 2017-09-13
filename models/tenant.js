@@ -10,6 +10,9 @@ var serviceSchema = mongoose.Schema({
     service: String,
     url: String,
     apiKey: String,
+    username: String,
+    password: String,
+    service_started: Boolean,
     active: Boolean
 });
 var tenantSchema = mongoose.Schema({
@@ -18,7 +21,7 @@ var tenantSchema = mongoose.Schema({
     tenant: { type: String, required: true },
     address: String,
     phone: String,
-    services: [serviceSchema]
+    services: [mongoose.Schema.Types.Mixed]
 });
 
 tenantSchema.pre('save', function (next) {
