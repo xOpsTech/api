@@ -1,103 +1,92 @@
 <!DOCTYPE html>
-<html >
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <title>xOps Login</title>
+	<meta charset="UTF-8">
+	<title>xOps Login</title>
 	<link rel="stylesheet" href="/assets/css/style.css">
-    <link rel="stylesheet" href="/assets/css/register.css">
-	    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
-    <script type="text/javascript">
-        var urlReq = document.location.href;
-        $.ajax({
-            url: '/previous_route/' + encodeURIComponent(urlReq),
-            dataType: 'jsonp',
-            success: function(data) {
-                console.log(data);
-            },
-            type: 'GET'
-        });;
-    </script>
+	<link rel="stylesheet" href="assets/css/login.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+	<script type="text/javascript">
+		var urlReq = document.location.href;
+		$.ajax({
+			url: '/previous_route/' + encodeURIComponent(urlReq),
+			dataType: 'jsonp',
+			success: function (data) {
+				console.log(data);
+			},
+			type: 'GET'
+		});;
+	</script>
 
 </head>
 
-<body ng-app="validationlogin" ng-controller="mainController">
- <div class="wrapper">
-	<div class="container" style="padding-left:20%;padding-right:20%;padding-top:10%">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-					<% if (message.length > 0) { %>
-		<div class="alert alert-danger"><%= message %></div>
-	<% } %>
-				<h1>Login</h1>
-		     <form  action="/login" method="post"  ng-submit="submitForm(loginForm.$valid)" name="loginForm" novalidate>
-				<div class="form-group">
-					<label> Username*</label>
-					<input type="text" name="id" class="form-control" ng-model="user.id" required>
-					<div ng-show="loginForm.id.$invalid && !loginForm.id.$pristine" class="alert alert-danger">Username is required.</div>
-				</div>
-				<div class="form-group">
-					<label>Password*</label>
-					<input type="password" class="form-control" name="password"  ng-model="password"  required>
-					<div  ng-show="myForm.password.$error.required"  class="alert alert-danger">
-					
-					</div>
-				</div>
+<body ng-app="validationlogin" ng-controller="mainController" class="container">
+	<div class="wrapper">
+		<div class="container">
 				<div class="row">
-					<div class="col-3">
-						<button type="submit"  class="btn btn-primary px-4">Login</button>
-					</div>
-					<div class="col-3">
-						<a href ="/auth/google" type="button" class="btn btn-primary px-4">Login with Google</a>
-					</div>
+						<div class="col-md-12 m-x-auto pull-xs-none vamiddle">
+			<form action="/login" method="post" ng-submit="submitForm(loginForm.$valid)" name="loginForm" novalidate>
+				<div>
+					<% if (message.length > 0) { %>
+						<div class="alert alert-danger">
+							<%= message %>
+						</div>
+						<% } %>
+							<div id="login" class="login">
+								<div class="login-icon-field">
+									<h1>Login</h1>
+									<div>New User? <a href="/signup">Register Now</a></div>
+								</div>
+
+								<div class="login-form">
+									<div class="form-group">
+										<input type="text" name="username" class="form-control" name="id" ng-model="user.id" required placeholder="Username">
+										<div ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="alert alert-danger">
+											Enter a valid Username.
+										</div>
+									</div>
+									<div class="form-group">
+										<input type="password" name="password" class="form-control" ng-model="password" required placeholder="Password">
+										<div ng-show="loginForm.password.$invalid && !loginForm.password.$pristine" class="alert alert-danger">
+											Password required.
+										</div>
+									</div>
+									<a href="/signup">Forgot your password?</a>
+								</div>
+								<div class="call-to-action">
+									<div class="form-group">
+										<button id="login-button" class="btn-danger" ng-disabled="loginForm.user.$dirty && loginForm.user.$invalid" type="submit">Login</button>
+									</div>
+									<div class="form-group">
+										<button id="login-button" class="btn-danger" onclick="location.href='/auth/google';" type="button">Login with Google</button>
+									</div>
+
+
+
+								</div>
+							</div>
 				</div>
-		     </form>
 
-			    <hr>
+		</div>
+		</form>
+		</div>
+		</div>
+	</div>
+	</div>
+</body>
+<script>
+		var validationlogin = angular.module('validationlogin', []);
+		// create angular controller
+		validationlogin.controller('mainController', function ($scope) {
+			// function to submit the form after all validation has occurred            
+			$scope.submitForm = function (isValid) {
+				// check to make sure the form is completely valid
+				if (isValid) {
+				}
+			};
+		});
 
-    <p>Doesnt have an account? <a href="/signup">Register</a></p>
-    
-            </div>
-        </div>
-    </div>
-
-	<ul class="bg-bubbles">
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-		<li></li>
-	</ul>
-    </div>
-
-	<script>
-var validationlogin = angular.module('validationlogin', []);
-// create angular controller
-validationlogin.controller('mainController', function($scope) {
-  // function to submit the form after all validation has occurred            
-  $scope.submitForm = function(isValid) {
-    // check to make sure the form is completely valid
-    if (isValid) {
-    }
-  };
-});
 </script>
-</body>
 
 </html>
-
-
-
-</div>
-  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-
-    <script src="/assets/js/index.js"></script>
-
-</body>
-</html>
-
-
