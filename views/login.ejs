@@ -6,6 +6,7 @@
 	<title>xOps Login</title>
 	<link rel="stylesheet" href="/assets/css/style.css">
 	<link rel="stylesheet" href="assets/css/login.css">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>	
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
 	<script type="text/javascript">
 		var urlReq = document.location.href;
@@ -41,7 +42,7 @@
 
 								<div class="login-form">
 									<div class="form-group">
-										<input type="text" name="username" class="form-control" name="id" ng-model="user.id" required placeholder="Username">
+										<input type="text" name="id" class="form-control" name="id" ng-model="user.id" required placeholder="Username">
 										<div ng-show="loginForm.username.$invalid && !loginForm.username.$pristine" class="alert alert-danger">
 											Enter a valid Username.
 										</div>
