@@ -79,7 +79,7 @@ app.use(flash());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
-app.use('/api/', isLoggedIn, apiroute);
+// app.use('/api/', isLoggedIn, apiroute);
 app.use('/api/', apiroute);
 
 // Add the Opbeat middleware after your regular middleware
