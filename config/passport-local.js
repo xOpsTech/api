@@ -61,9 +61,11 @@ module.exports = function(passport) {
                 var dbCon  = db.getConnection();
                 newUser.id  = id;
                 newUser.email = req.body.email;
+                newUser.tenantId = req.body.tenantId;
 
                 newUser.picture = 'http://www.freeiconspng.com/uploads/am-a-19-year-old-multimedia-artist-student-from-manila--21.png';
-                newUser.name = req.body.firstname+ " " +req.body.lastname ;
+                // newUser.name = req.body.firstname+ " " +req.body.lastname ;
+                newUser.name = req.body.name ;
 
                 newUser.personalization.timezone =  req.body.timezone;
                 newUser.personalization.theme =  'Theme1';

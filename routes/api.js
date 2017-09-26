@@ -26,7 +26,13 @@ exports.uploadFiles = function (req, res) {
 }
 
 exports.getUser = function (req, res) {
-    var email = (req.user.email).toLowerCase();
+    var email = '';
+    if (req.user.email) {
+        email = (req.user.email).toLowerCase();
+    } else {
+        email = (req.user.id).toLowerCase();
+    }
+
     var adminList = config.admin;
     if (adminList.indexOf(email) > -1) {
         req.user.admin = true;
