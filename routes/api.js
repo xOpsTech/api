@@ -195,7 +195,7 @@ exports.getTenantByUserId = function (req, res) {
     var userId = req.params.userId;
     db_instance = db.getConnection()
 
-    var query = { email: userId };
+    var query = { id: userId };
 
     db_instance.collection("users").findOne(query, function (err, remongo_responses) {
         if (err || !remongo_responses) {
