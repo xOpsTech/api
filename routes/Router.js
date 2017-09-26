@@ -20,7 +20,8 @@ router.route('/scholastic/services-health').get(api.getServiceHealth);
 
 router.route('/metrics/wpt').get(alertApi.getMetrics);
 router.route('/alerts').get(alertApi.getAlerts);
-router.route('/alerts/:tenantId').get(alertApi.getTenantAlerts);
+// router.route('/alerts/:tenantId').get(alertApi.getTenantAlerts);
+router.route('/alerts/:tenantId').get(alertApi.getAlerts);
 router.route('/alerts/stats').get(alertApi.getAlertStats);
 router.route('/alerts/trend').get(alertApi.getAlertTrend);
 router.route('/alerts/myalerts').get(alertApi.myAlerts);
