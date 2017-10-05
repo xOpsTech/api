@@ -1,6 +1,7 @@
 var express = require('express');
 var api = require("./api");
 var alertApi = require("./alert_api");
+var metricsApi = require("./metrics_api");
 var programApi = require("./product_api");
 var servicenow = require("./servicenow_api")
 var healthConfigs = require("./health_configs")
@@ -21,9 +22,10 @@ router.route('/scholastic/services-health').get(api.getServiceHealth);
 router.route('/metrics/wpt').get(alertApi.getMetrics);
 router.route('/alerts').get(alertApi.getAlerts);
 // router.route('/alerts/:tenantId').get(alertApi.getTenantAlerts);
-router.route('/alerts/:tenantId').get(alertApi.getAlerts);
+
 router.route('/alerts/stats').get(alertApi.getAlertStats);
 router.route('/alerts/trend').get(alertApi.getAlertTrend);
+router.route('/alerts/:tenantId').get(alertApi.getAlerts);
 router.route('/alerts/myalerts').get(alertApi.myAlerts);
 
 router.route('/alerts').post(alertApi.saveAlerts);
@@ -41,6 +43,8 @@ router.route('/incidents/_create').post(alertApi.createIncident);
 router.route('/health_configs/perf_indicators/:tenantId').get(healthConfigs.getHealthConfigs);
 router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.saveItemIndicators);
 router.route('/health_configs/item_status/:tenantId').get(healthConfigs.getItemStatus);
+
+router.route('/newrelic/map/:tenantId').get(metricsApi.getNewrelicMapData);
 
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
