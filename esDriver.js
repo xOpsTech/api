@@ -133,5 +133,9 @@ module.exports = {
   getItemStatus: function (tenantId, callback) {
     var query = { query: { match_all: {} }, size: 100 };
     _read_data('item_status_' + tenantId, 'metrics', query, callback);
+  },
+  newrelicMapData: function (tenantId, callback) {
+    var query = {"size":0,"aggs":{"location":{"terms":{"field":"locationLabel.keyword","size":10},"aggs":{"app":{"terms":{"field":"monitorName.keyword","size":10},"aggs":{"top":{"top_hits":{"sort":[{"timestamp":{"order":"desc"}}],"_source":{"includes":["locationCoordinates","monitorName","duration","locationLabel"]},"size":1}}}}}}}};
+    _read_data('metrics-' + tenantId, 'newrelic-synthetics', query, callback);
   }
 }
