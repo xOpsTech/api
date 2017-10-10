@@ -20,12 +20,16 @@ exports.getNewrelicMapData = function (req, res) {
                 var appBucketList = locationBucket.app.buckets;
                 appBucketList.map(function (appbucket) {
                     var appbucketSource = appbucket.top.hits.hits[0]._source;
-                    var locationCoordinatesArray = appbucketSource.locationCoordinates.split(",");
-                    appbucketSource.latitude = locationCoordinatesArray[0];
-                    appbucketSource.longitude = locationCoordinatesArray[1];
-                    delete appbucketSource.locationCoordinates;
+                    var locationCoordinatesArray = null;
+                    if (typeof appbucketSource.locationCoordinates !== 'undefined') {
+                        locationCoordinatesArray = appbucketSource.locationCoordinates.split(",");
+                        appbucketSource.latitude = locationCoordinatesArray[0];
+                        appbucketSource.longitude = locationCoordinatesArray[1];
+                        delete appbucketSource.locationCoordinates;
 
-                    mapItem.apps.push(appbucketSource);
+                        mapItem.apps.push(appbucketSource);
+                    } 
+
                 });
 
                 finalResult.newrelicMapData.push(mapItem);
