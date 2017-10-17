@@ -85,6 +85,30 @@ exports.updateUser = function (req, res) {
         })
 }
 
+exports.updateTenant = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var tenantJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('tenants').updateOne(
+        { id: tenantId },
+        { $set: tenantJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        })
+}
+
 exports.getAllWidgets = function (req, res) {
     db_instance = db.getConnection()
     db_instance.collection("widgets").find({}).toArray(function (err, remongo_responses) {
