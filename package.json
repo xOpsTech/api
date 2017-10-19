@@ -23,6 +23,7 @@
     "grunt-contrib-uglify": "^1.0.1",
     "grunt-preprocess": "^5.1.0",
     "grunt-string-replace": "^1.2.1",
+    "jsonwebtoken": "^8.1.0",
     "log4js": "^1.1.1",
     "method-override": "^2.3.9",
     "mongodb": "^2.2.27",
@@ -32,10 +33,10 @@
     "passport": "^0.3.2",
     "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
+    "randomstring": "^1.1.5",
     "request": "^2.81.0",
     "serve-favicon": "^2.4.3",
-    "shortid": "^2.2.8",
-    "randomstring": "^1.1.5"
+    "shortid": "^2.2.8"
   },
   "devDependencies": {},
   "scripts": {
