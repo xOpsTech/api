@@ -23,7 +23,10 @@ var express = require('express'),
     session = require('client-sessions'),
     db = require('./routes/DBConnection'),
     apiroute = require('./routes/Router'),
-    cors = require('cors')
+    cors = require('cors'),
+    User   = require('./models/user'); // get our mongoose model
+    bcrypt   = require('bcrypt');
+    jwt    = require('jsonwebtoken');
     // userApi = require('./routes/project.js'),
     // testApi = require('./routes/tests.js')
     ;
@@ -81,6 +84,7 @@ app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
 // app.use('/api/', isLoggedIn, apiroute);
 app.use('/api/', apiroute);
+app.set('superSecret', 'ilovescotchyscotch');
 
 // Add the Opbeat middleware after your regular middleware
 app.use(opbeat.middleware.express())
@@ -98,15 +102,16 @@ app.post('/signup', passport.authenticate('local-signup', {
     failureFlash : true // allow flash messages
 
 }));
-app.get('/login', function(req, res) {
-    // render the page and pass in any flash data if it exists
-    res.render('login.ejs', { message: req.flash('loginMessage') });
-});
-app.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/', // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
-}));
+
+// app.get('/login', function(req, res) {
+//     // render the page and pass in any flash data if it exists
+//     res.render('login.ejs', { message: req.flash('loginMessage') });
+// });
+// app.post('/login', passport.authenticate('local-login', {
+//     successRedirect : '/', // redirect to the secure profile section
+//     failureRedirect : '/login', // redirect back to the signup page if there is an error
+//     failureFlash : true // allow flash messages
+// }));
 
 /*app.get('/alert', isLoggedIn, routes.index);
 app.get('/dashboard', isLoggedIn, routes.index);
@@ -115,6 +120,61 @@ app.get('/settings', isLoggedIn, routes.index);
 app.get('/map', isLoggedIn, routes.index);
 app.get('/rssfeed', isLoggedIn, routes.index);
 */
+
+app.post('/login',function(req, res){   
+User.findOne({
+        id: req.body.id
+    }, function(err, user) {
+        if (err) throw err;
+        if (!user) {
+            res.json({ success: false, message: 'Authentication failed. User not found.' });
+        } else if (user) {
+            // check if password matches
+            if (!bcrypt.compareSync(req.body.password,user.password)) {
+                res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+            } else {
+                var payload = {
+                    user: req.body.id  
+                }
+                var token = jwt.sign(payload, app.get('superSecret'), {
+                    expiresIn: 86400 // expires in 24 hours
+                });              
+                res.json({
+                    success: true,
+                    message: 'Enjoy your token!', 
+                    token: token                 
+                });
+            }     
+
+        }
+
+    });
+});
+
+app.use(function(req, res, next) {
+    // check header or url parameters or post parameters for token
+    var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+    // decode token
+    if (token) {
+        // verifies secret and checks exp
+        jwt.verify(token, app.get('superSecret'), function(err, decoded) {          
+            if (err) {
+                return res.json({ success: false, message: 'Failed to authenticate token.' });      
+            } else {
+                // if everything is good, save to request for use in other routes
+                req.decoded = decoded;  
+                next();
+            }
+        });
+    } else {
+        // if there is no token
+        // return an error
+        return res.status(403).send({ 
+            success: false, 
+            message: 'No token provided.'
+        });        
+    }    
+});
 
 app.get('/notallowed',endSession ,routes.notallowed);
 app.get('/users', isLoggedIn, user.list);
