@@ -201,12 +201,13 @@ exports.getIncidents = function (req, res) {
 
 exports.getTenantIncidents = function (req, res) {
     var tenantId = req.params.tenantId;
+    finalResponse = {"data":[{"aggs_by_active":{"closed":4,"open":10,"total":14}},{"aggs_by_priority":{"P1":0.05,"P2":0.04,"P3":0.01,"P4":0.01,"P5":0.89,"total":14}},{"p1_incidents":["INC1011","INC1022"],"total":2},{"sla_stats":{"missedSlaCount":15,"aboutToMissSlaCount":0}}],"error":false};
 
-    if (tenantId === 'hkpxasc8b') {
-        finalResponse = {"data":[{"aggs_by_active":{"closed":9,"open":103,"total":112}},{"aggs_by_priority":{"P1":0.05,"P2":0.04,"P3":0.01,"P4":0.01,"P5":0.89,"total":112}},{"p1_incidents":["INC0558073","INC0558074","INC0558075","INC0558076","INC0558085","INC0558157"],"total":6},{"sla_stats":{"missedSlaCount":155,"aboutToMissSlaCount":0}}],"error":false};
-    } else if (tenantId === 'bjxa6sc8w'){
-        finalResponse = {"data":[{"aggs_by_active":{"closed":4,"open":10,"total":14}},{"aggs_by_priority":{"P1":0.05,"P2":0.04,"P3":0.01,"P4":0.01,"P5":0.89,"total":14}},{"p1_incidents":["INC1011","INC1022"],"total":2},{"sla_stats":{"missedSlaCount":15,"aboutToMissSlaCount":0}}],"error":false};
-    }
+    // if (tenantId === 'hkpxasc8b') {
+    //     finalResponse = {"data":[{"aggs_by_active":{"closed":9,"open":103,"total":112}},{"aggs_by_priority":{"P1":0.05,"P2":0.04,"P3":0.01,"P4":0.01,"P5":0.89,"total":112}},{"p1_incidents":["INC0558073","INC0558074","INC0558075","INC0558076","INC0558085","INC0558157"],"total":6},{"sla_stats":{"missedSlaCount":155,"aboutToMissSlaCount":0}}],"error":false};
+    // } else if (tenantId === 'bjxa6sc8w'){
+    //     finalResponse = {"data":[{"aggs_by_active":{"closed":4,"open":10,"total":14}},{"aggs_by_priority":{"P1":0.05,"P2":0.04,"P3":0.01,"P4":0.01,"P5":0.89,"total":14}},{"p1_incidents":["INC1011","INC1022"],"total":2},{"sla_stats":{"missedSlaCount":15,"aboutToMissSlaCount":0}}],"error":false};
+    // }
 
     return res.status(200).json({
             data: finalResponse,
