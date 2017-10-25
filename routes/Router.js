@@ -11,6 +11,7 @@ router.route('/user').get(api.getUser);
 router.route('/user/_list').get(api.getUserList);
 router.route('/user').post(api.saveUser);
 router.route('/tenant').post(api.saveTenant);   
+router.route('/gettenant/:tenant').get(api.getTenantIDbytenant); 
 router.route('/tenant/:userId').get(api.getTenantByUserId);   
 router.route('/tenant/:tenantId').put(api.updateTenant);  
 router.route('/user/:userId').put(api.updateUser);

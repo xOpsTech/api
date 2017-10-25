@@ -215,6 +215,30 @@ exports.saveTenant = function (req, res) {
     });
 }
 
+exports.getTenantIDbytenant = function (req, res) {
+    console.log(req.params.tenant)
+    var tenant = req.params.tenant;
+    db_instance = db.getConnection()
+
+    var query = { tenant: tenant};
+
+    db_instance.collection("tenants").find(query).toArray(function (err, result) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        // console.log(remongo_responses);
+        return res.status(200).json({
+            tenantId: result[0]["id"],
+            error: false
+        })
+
+    });
+}
+
 exports.getTenantByUserId = function (req, res) {
     var userId = req.params.userId;
     db_instance = db.getConnection()
