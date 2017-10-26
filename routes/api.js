@@ -40,6 +40,30 @@ exports.getUser = function (req, res) {
     res.send(req.user);
 }
 
+exports.getTenantIDbytenant = function (req, res) {
+    console.log(req.params.tenant)
+    var tenant = req.params.tenant;
+    db_instance = db.getConnection()
+
+    var query = { tenant: tenant};
+
+    db_instance.collection("tenants").find(query).toArray(function (err, result) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        // console.log(remongo_responses);
+        return res.status(200).json({
+            tenantId: result[0]["id"],
+            error: false
+        })
+
+    });
+}
+
 exports.saveUser = function (req, res) {
     var userJson = req.body;
     db_instance = db.getConnection()

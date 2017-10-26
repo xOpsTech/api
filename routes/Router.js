@@ -8,6 +8,7 @@ var healthConfigs = require("./health_configs")
 
 var router = require('express').Router();
 router.route('/user').get(api.getUser);
+router.route('/gettenant/:tenant').get(api.getTenantIDbytenant); 
 router.route('/user/_list').get(api.getUserList);
 router.route('/user').post(api.saveUser);
 router.route('/tenant').post(api.saveTenant);   

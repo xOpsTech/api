@@ -89,7 +89,7 @@ app.set('superSecret', 'ilovescotchyscotch');
 // Add the Opbeat middleware after your regular middleware
 app.use(opbeat.middleware.express())
 
-app.get('/', isLoggedIn, routes.index);
+app.get('/', routes.index);
 app.set('view engine', 'ejs');
   app.get('/signup', function(req, res) {
 
@@ -177,7 +177,7 @@ app.use(function(req, res, next) {
 });
 
 app.get('/notallowed',endSession ,routes.notallowed);
-app.get('/users', isLoggedIn, user.list);
+app.get('/users', user.list);
 app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
@@ -200,27 +200,27 @@ app.get('/previous_route/:requestedurl', function(req,res){
     req.session.previousUrl = originalUrl;
     res.send("done");
 });
-function isLoggedIn(req, res, next) {
-    if (process.env.NODE_ENV === 'dev') {
-        return next();
-    }
+// function isLoggedIn(req, res, next) {
+//     if (process.env.NODE_ENV === 'dev') {
+//         return next();
+//     }
 
-    // if user is authenticated in the session, carry on
-    if (req.isAuthenticated()) {
-        req.session.access_token = req.user.token;
-        if (req.session.previousUrl !== undefined) {
-            var url = req.session.previousUrl;
-            req.session.previousUrl = undefined;
-            res.redirect(url);
-        } else {
+//     // if user is authenticated in the session, carry on
+//     if (req.isAuthenticated()) {
+//         req.session.access_token = req.user.token;
+//         if (req.session.previousUrl !== undefined) {
+//             var url = req.session.previousUrl;
+//             req.session.previousUrl = undefined;
+//             res.redirect(url);
+//         } else {
 
-            return next();
-        }
+//             return next();
+//         }
 
-    } else {
-        res.redirect('/login');
-    }
-}
+//     } else {
+//         res.redirect('/login');
+//     }
+// }
 
 function endSession( req, res, next) {
 	res.clearCookie('passport');
