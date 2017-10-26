@@ -15,6 +15,7 @@ var express = require('express'),
     passport = require('passport'),
 
     user = require('./routes/user'),
+    api = require("./routes/api");
     http = require('http'),
     dbCon = require('./routes/DBConnection'),
     path = require('path'),
@@ -153,7 +154,8 @@ User.findOne({
 
 app.use(function(req, res, next) {
     // check header or url parameters or post parameters for token
-    var token = req.body.token || req.param('token') || req.headers['x-access-token'];
+    // console.log(req.headers['token']);
+    var token = req.header.token || req.param('token') || req.headers['token'];
     // decode token
     if (token) {
         // verifies secret and checks exp
@@ -177,7 +179,13 @@ app.use(function(req, res, next) {
 });
 
 app.get('/notallowed',endSession ,routes.notallowed);
-app.get('/users', isLoggedIn, user.list);
+
+app.get('/user', api.getDbUser);
+
+
+
+
+
 app.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');

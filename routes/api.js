@@ -26,18 +26,24 @@ exports.uploadFiles = function (req, res) {
 }
 
 exports.getUser = function (req, res) {
+    
     var email = '';
-    if (req.user.email) {
-        email = (req.user.email).toLowerCase();
-    } else {
-        email = (req.user.id).toLowerCase();
+    if (req.decoded['user']) {
+        email = (req.decoded['user']).toLowerCase();
     }
+    // } else {
+    //     email = (req.user.id).toLowerCase();
+    // }
 
     var adminList = config.admin;
+     console.log(config.admin);
     if (adminList.indexOf(email) > -1) {
+       
         req.user.admin = true;
     }
-    res.send(req.user);
+
+    res.send(req.decoded['user']);
+   // console.log(res);
 }
 
 exports.saveUser = function (req, res) {
@@ -104,7 +110,7 @@ exports.getAllWidgets = function (req, res) {
 }
 
 exports.getDbUser = function (req, res) {
-    var userId = req.params.userId;
+    var userId =req.decoded['user'];
     db_instance = db.getConnection()
 
     var query = { email: userId };
@@ -121,7 +127,7 @@ exports.getDbUser = function (req, res) {
         return res.status(200).json({
             message: remongo_responses,
             error: false
-        })
+        });        
 
     });
 }
