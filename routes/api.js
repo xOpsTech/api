@@ -46,6 +46,30 @@ exports.getUser = function (req, res) {
    // console.log(res);
 }
 
+exports.getTenantIDbytenant = function (req, res) {
+    console.log(req.params.tenant)
+    var tenant = req.params.tenant;
+    db_instance = db.getConnection()
+
+    var query = { tenant: tenant};
+
+    db_instance.collection("tenants").find(query).toArray(function (err, result) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        // console.log(remongo_responses);
+        return res.status(200).json({
+            tenantId: result[0]["id"],
+            error: false
+        })
+
+    });
+}
+
 exports.saveUser = function (req, res) {
     var userJson = req.body;
     db_instance = db.getConnection()
@@ -74,6 +98,30 @@ exports.updateUser = function (req, res) {
     db_instance.collection('users').updateOne(
         { email: userId },
         { $set: userJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        })
+}
+
+exports.updateTenant = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var tenantJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('tenants').updateOne(
+        { id: tenantId },
+        { $set: tenantJson }
         , function (err, remongo_responses) {
             if (err) {
                 console.log(err);
@@ -194,6 +242,30 @@ exports.saveTenant = function (req, res) {
             },
             error: false
         })
+    });
+}
+
+exports.getTenantIDbytenant = function (req, res) {
+    console.log(req.params.tenant)
+    var tenant = req.params.tenant;
+    db_instance = db.getConnection()
+
+    var query = { tenant: tenant};
+
+    db_instance.collection("tenants").find(query).toArray(function (err, result) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        // console.log(remongo_responses);
+        return res.status(200).json({
+            tenantId: result[0]["id"],
+            error: false
+        })
+
     });
 }
 
