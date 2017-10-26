@@ -111,9 +111,10 @@ exports.getAllWidgets = function (req, res) {
 
 exports.getDbUser = function (req, res) {
     var userId =req.decoded['user'];
+    // console.log(userId);
     db_instance = db.getConnection()
 
-    var query = { email: userId };
+    var query = { id: userId };
 
     db_instance.collection("users").find(query).toArray(function (err, remongo_responses) {
         if (err) {
@@ -123,7 +124,7 @@ exports.getDbUser = function (req, res) {
                 error: true
             });
         }
-        // console.log(remongo_responses);
+        console.log(remongo_responses);
         return res.status(200).json({
             message: remongo_responses,
             error: false
