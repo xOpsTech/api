@@ -26,7 +26,7 @@ exports.uploadFiles = function (req, res) {
 }
 
 exports.getUser = function (req, res) {
-    
+
     var email = '';
     if (req.decoded['user']) {
         email = (req.decoded['user']).toLowerCase();
@@ -36,14 +36,14 @@ exports.getUser = function (req, res) {
     // }
 
     var adminList = config.admin;
-     console.log(config.admin);
+    console.log(config.admin);
     if (adminList.indexOf(email) > -1) {
-       
+
         req.user.admin = true;
     }
 
     res.send(req.decoded['user']);
-   // console.log(res);
+    // console.log(res);
 }
 
 exports.getTenantIDbytenant = function (req, res) {
@@ -51,24 +51,30 @@ exports.getTenantIDbytenant = function (req, res) {
     var tenant = req.params.tenant;
     db_instance = db.getConnection()
 
-    var query = { tenant: tenant};
+    var query = { tenant: tenant };
 
     db_instance.collection("tenants").find(query).toArray(function (err, result) {
-        if (err) {
-            console.log(err);
-            return res.status(404).json({
-                message: JSON.stringify(err),
-                error: true
-            });
-        }
-        // console.log(remongo_responses);
-        return res.status(200).json({
-            tenantId: result[0]["id"],
+        var finalResult = {
+            tenantId: "",
             error: false
-        })
+        }
+        try {
+            if (typeof result[0] !== 'undefined') {
+               finalResult.tenantId = result[0]["id"]
+            }
+            return res.status(200).json({
+                tenantId: finalResult.tenantId,
+                error: false
+            })
 
-    });
-}
+        } catch (err) {
+            console.log(err);
+            finalResult.error = true;
+            return res.status(500).json(finalResult);
+        }
+           
+        });
+    }
 
 exports.saveUser = function (req, res) {
     var userJson = req.body;
@@ -158,7 +164,7 @@ exports.getAllWidgets = function (req, res) {
 }
 
 exports.getDbUser = function (req, res) {
-    var userId =req.decoded['user'];
+    var userId = req.decoded['user'];
     // console.log(userId);
     db_instance = db.getConnection()
 
@@ -176,7 +182,7 @@ exports.getDbUser = function (req, res) {
         return res.status(200).json({
             message: remongo_responses,
             error: false
-        });        
+        });
 
     });
 }
@@ -243,30 +249,6 @@ exports.saveTenant = function (req, res) {
             },
             error: false
         })
-    });
-}
-
-exports.getTenantIDbytenant = function (req, res) {
-    console.log(req.params.tenant)
-    var tenant = req.params.tenant;
-    db_instance = db.getConnection()
-
-    var query = { tenant: tenant};
-
-    db_instance.collection("tenants").find(query).toArray(function (err, result) {
-        if (err) {
-            console.log(err);
-            return res.status(404).json({
-                message: JSON.stringify(err),
-                error: true
-            });
-        }
-        // console.log(remongo_responses);
-        return res.status(200).json({
-            tenantId: result[0]["id"],
-            error: false
-        })
-
     });
 }
 
