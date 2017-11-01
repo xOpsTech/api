@@ -36,7 +36,6 @@ exports.getUser = function (req, res) {
     // }
 
     var adminList = config.admin;
-    console.log(config.admin);
     if (adminList.indexOf(email) > -1) {
 
         req.user.admin = true;
@@ -47,7 +46,6 @@ exports.getUser = function (req, res) {
 }
 
 exports.getTenantIDbytenant = function (req, res) {
-    console.log(req.params.tenant)
     var tenant = req.params.tenant;
     db_instance = db.getConnection()
 
@@ -178,7 +176,6 @@ exports.getDbUser = function (req, res) {
                 error: true
             });
         }
-        console.log(remongo_responses);
         return res.status(200).json({
             message: remongo_responses,
             error: false
