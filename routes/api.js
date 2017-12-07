@@ -74,6 +74,31 @@ exports.getTenantIDbytenant = function (req, res) {
         });
     }
 
+    exports.updateUser = function (req, res) {
+        var id = req.params.userId;
+        var userJson = req.body;
+        db_instance = db.getConnection()
+        db_instance.collection('users').updateOne(
+            { id: id },
+            { $set: userJson }
+            , function (err, remongo_responses) {
+                if (err) {
+                    console.log(err);
+                    return res.status(404).json({
+                        message: JSON.stringify(err),
+                        error: true
+                    });
+                }
+                console.log("1 record updated");
+                // db_instance.close();
+                return res.status(200).json({
+                    message: "record is updated successfully",
+                    error: false
+                })
+            });
+    };
+
+
 exports.saveUser = function (req, res) {
     var userJson = req.body;
     db_instance = db.getConnection()
@@ -94,30 +119,57 @@ exports.saveUser = function (req, res) {
     });
 }
 
-exports.updateUser = function (req, res) {
-    var userId = req.params.userId;
-    var userJson = req.body;
+
+
+exports.getUserByTenantId = function(req,res){
+    var tenantId = req.params.tenantId;//fjuc6xf
     db_instance = db.getConnection()
-    console.log(userId)
-    db_instance.collection('users').updateOne(
-        { email: userId },
-        { $set: userJson }
-        , function (err, remongo_responses) {
-            if (err) {
-                console.log(err);
-                return res.status(404).json({
-                    message: JSON.stringify(err),
-                    error: true
-                });
-            }
-            console.log("1 record updated");
-            // db_instance.close();
-            return res.status(200).json({
-                message: "record is updated successfully",
-                error: false
-            })
+    db_instance.collection("users").find({tenantId:tenantId}).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+
+        var userObj = [];
+        remongo_responses.map(function (user) {
+            userObj.push({ id: user.id, email: user.email, name: user.name ,password:user.password,tenantId:user.tenantId});
         })
+        return res.status(200).json({
+            data: userObj,
+            error: false
+        })
+
+    });
+
 }
+
+// exports.updateUser = function (req, res) {
+//     var userId = req.params.userId;
+//     var userJson = req.body;
+//     db_instance = db.getConnection()
+//     console.log(userId)
+//     db_instance.collection('users').updateOne(
+//         { email: userId },
+//         { $set: userJson }
+//         , function (err, remongo_responses) {
+//             if (err) {
+//                 console.log(err);
+//                 return res.status(404).json({
+//                     message: JSON.stringify(err),
+//                     error: true
+//                 });
+//             }
+//             console.log("1 record updated");
+//             // db_instance.close();
+//             return res.status(200).json({
+//                 message: "record is updated successfully",
+//                 error: false
+//             })
+//         })
+// }
 
 exports.updateTenant = function (req, res) {
     var tenantId = req.params.tenantId;
