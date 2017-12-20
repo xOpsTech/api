@@ -134,8 +134,24 @@ module.exports = {
     var query = { query: { match_all: {} }, size: 100 };
     _read_data('item_status_' + tenantId, 'metrics', query, callback);
   },
+  getMetricTerms: function (tenantId, callback) {
+    var query = {"size":0,"aggs":{"types":{"terms":{"field":"_type","size":10},"aggs":{"metric_terms":{"terms":{"field":"id.keyword","size":10}}}}}};
+    _read_data('metrics-' + tenantId, null, query, callback);
+  },
   newrelicMapData: function (tenantId, callback) {
     var query = {"size":0,"aggs":{"location":{"terms":{"field":"locationLabel.keyword","size":10},"aggs":{"app":{"terms":{"field":"monitorName.keyword","size":10},"aggs":{"top":{"top_hits":{"sort":[{"timestamp":{"order":"desc"}}],"_source":{"includes":["locationCoordinates","monitorName","duration","locationLabel"]},"size":1}}}}}}}};
     _read_data('metrics-' + tenantId, 'newrelic-synthetics', query, callback);
+  },
+  getItemIndicator: function (tenantId, itemId, callback) {
+    var query = `{"query":{"term":{"_id":"${itemId}"}}}`
+    _read_data('item_indicators_' + tenantId, 'configs', query, callback);
+  },
+  getLatestMetricValue: function (tenantId, metricId, callback) {
+    var query = `{"query":{"bool":{"must":[{"term":{"monitorId.keyword":{"value":"${metricId}"}}},{"range":{"timestamp":{"gte":"now-94d"}}}]}},"sort":[{"timestamp":{"order":"desc"}}],"_source":["duration"],"size":1}`
+    _read_data('metrics-' + tenantId, null, query, callback);
+  },
+  getItemAndPerf: function (tenantId, callback) {
+    var query = `{"_source":"_id"}`
+    _read_data(['metrics-' + tenantId, 'item-indicators-' + tenantId], null, query, callback);
   }
 }
