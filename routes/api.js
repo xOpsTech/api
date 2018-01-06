@@ -147,31 +147,6 @@ exports.getUserByTenantId = function(req,res){
 
 }
 
-// exports.updateUser = function (req, res) {
-//     var userId = req.params.userId;
-//     var userJson = req.body;
-//     db_instance = db.getConnection()
-//     console.log(userId)
-//     db_instance.collection('users').updateOne(
-//         { email: userId },
-//         { $set: userJson }
-//         , function (err, remongo_responses) {
-//             if (err) {
-//                 console.log(err);
-//                 return res.status(404).json({
-//                     message: JSON.stringify(err),
-//                     error: true
-//                 });
-//             }
-//             console.log("1 record updated");
-//             // db_instance.close();
-//             return res.status(200).json({
-//                 message: "record is updated successfully",
-//                 error: false
-//             })
-//         })
-// }
-
 exports.updateTenant = function (req, res) {
     var tenantId = req.params.tenantId;
     var tenantJson = req.body;
@@ -216,12 +191,7 @@ exports.getAllWidgets = function (req, res) {
 
 exports.getDbUser = function (req, res) {
     var userId = req.decoded.user;
-   
-   console.log("adsasd" +typeof(userId));
-   console.log("adsasd2" +userId);
-   console.log("adsasd2" +userId);
     db_instance = db.getConnection();
-
     var query = { id: userId };
 
     db_instance.collection("users").find(query).toArray(function (err, remongo_responses) {
