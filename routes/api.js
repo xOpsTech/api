@@ -101,6 +101,7 @@ exports.getTenantIDbytenant = function (req, res) {
 
 exports.saveUser = function (req, res) {
     var userJson = req.body;
+    userJson.password = bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(8), null);
     db_instance = db.getConnection()
     db_instance.collection('users').save(userJson, function (err, mongo_response) {
         if (err) {
@@ -214,9 +215,12 @@ exports.getAllWidgets = function (req, res) {
 }
 
 exports.getDbUser = function (req, res) {
-    var userId = req.decoded['user'];
-    // console.log(userId);
-    db_instance = db.getConnection()
+    var userId = req.decoded.user;
+   
+   console.log("adsasd" +typeof(userId));
+   console.log("adsasd2" +userId);
+   console.log("adsasd2" +userId);
+    db_instance = db.getConnection();
 
     var query = { id: userId };
 
