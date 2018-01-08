@@ -124,15 +124,15 @@ module.exports = {
   },
   healthConfigs: function (tenantId, callback) {
     var query = { query: { match_all: {} }, _source: ["id"], size: 100 };
-    _read_data(['perf_indicators_' + tenantId, 'item_indicators_' + tenantId],'configs' , query, callback);
+    _read_data(['perf-indicators-' + tenantId, 'item-indicators-' + tenantId],'configs' , query, callback);
 
   },
   addItemIndicators: function (tenantId, itemObj) {
-    _index_data('item_indicators_' + tenantId, 'configs', itemObj.id, itemObj);
+    _index_data('item-indicators-' + tenantId, 'configs', itemObj.id, itemObj);
   },
   getItemStatus: function (tenantId, callback) {
     var query = { query: { match_all: {} }, size: 100 };
-    _read_data('item_status_' + tenantId, 'metrics', query, callback);
+    _read_data('item-status-' + tenantId, 'metrics', query, callback);
   },
   getMetricTerms: function (tenantId, callback) {
     var query = {"size":0,"aggs":{"types":{"terms":{"field":"_type","size":10},"aggs":{"metric_terms":{"terms":{"field":"id.keyword","size":10}}}}}};
@@ -144,7 +144,7 @@ module.exports = {
   },
   getItemIndicator: function (tenantId, itemId, callback) {
     var query = `{"query":{"term":{"_id":"${itemId}"}}}`
-    _read_data('item_indicators_' + tenantId, 'configs', query, callback);
+    _read_data('item-indicators-' + tenantId, 'configs', query, callback);
   },
   getLatestMetricValue: function (tenantId, metricId, callback) {
     var query = `{"query":{"bool":{"must":[{"term":{"monitorId.keyword":{"value":"${metricId}"}}},{"range":{"timestamp":{"gte":"now-94d"}}}]}},"sort":[{"timestamp":{"order":"desc"}}],"_source":["duration"],"size":1}`

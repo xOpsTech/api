@@ -46,9 +46,10 @@ router.route('/incidents/_create').post(alertApi.createIncident);
 
 router.route('/health_configs/metric_terms/:tenantId').get(healthConfigs.getMetricTerms);
 router.route('/health_configs/perf_indicators/:tenantId').get(healthConfigs.getHealthConfigs);
-router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.saveItemIndicators);
 router.route('/health_configs/item_status/:tenantId').get(healthConfigs.getItemStatus);
+
 router.route('/health_configs/configs/:tenantId').get(healthConfigs.getItemAndPerf);
+router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.saveItemIndicators);
 
 router.route('/newrelic/map/:tenantId').get(metricsApi.getNewrelicMapData);
 
