@@ -98,6 +98,33 @@ exports.getTenantIDbytenant = function (req, res) {
             });
     };
 
+    // edit userType
+    exports.updateUserType = function (req, res) {
+        var userType = req.params.userType.name;
+        var userJson = req.body;
+        db_instance = db.getConnection()
+        db_instance.collection('userType').updateOne(
+            { id: name },
+            { $set: userTypeJson }
+            , function (err, remongo_responses) {
+                if (err) {
+                    console.log(err);
+                    return res.status(404).json({
+                        message: JSON.stringify(err),
+                        error: true
+                    });
+                }
+                console.log("1 record updated");
+                // db_instance.close();
+                return res.status(200).json({
+                    message: "record is updated successfully",
+                    error: false
+                })
+            });
+    };
+    // end
+
+
 
 exports.saveUser = function (req, res) {
     var userJson = req.body;
@@ -120,6 +147,27 @@ exports.saveUser = function (req, res) {
     });
 }
 
+// save UserType
+exports.saveUserType = function(req,res){
+    var userTypeJson=req.body;
+    db_instance=db.getConnection();
+    db_instance.collection('userType').save(userTypeJson,function(err,mongo_response){
+        if(err){
+            console.log(err);
+            return res.status(404).json({
+                message:JSON.stringify(err),
+                error:true
+            })
+        }
+        console.log("User Type has been added");
+        return res.status(201).json({
+            message:"record is saved successfully",
+            error:false
+        })
+    })
+};
+// end
+
 
 
 exports.getUserByTenantId = function(req,res){
@@ -136,15 +184,36 @@ exports.getUserByTenantId = function(req,res){
 
         var userObj = [];
         remongo_responses.map(function (user) {
-            userObj.push({ id: user.id, email: user.email, name: user.name ,password:user.password,tenantId:user.tenantId});
+            console.log('This is the response');
+            userObj.push({ id: user.id, email: user.id, name: user.name ,password:user.password,tenantId:user.tenantId,userType:user.userType});
         })
         return res.status(200).json({
             data: userObj,
             error: false
         })
-
     });
+}
 
+exports.getUserTypeByTenantId = function(req,res){
+    var tenantId = req.params.tenantId;//fjuc6xf
+    db_instance = db.getConnection()
+    db_instance.collection("userType").find({tenantId:tenantId}).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        var userTypeObject = [];
+        remongo_responses.map(function (userTypeJson) {
+            userTypeObject.push({ name: userTypeJson.name, management: userTypeJson.management, develop: userTypeJson.develop ,userTypeManager:userTypeJson.userTypeManager,profileManager:userTypeJson.profileManager,userManager:userTypeJson.userManager,inputSourceManager:userTypeJson.inputSourceManager,tenantId:userTypeJson.tenantId});
+        })
+        return res.status(200).json({
+            data: userTypeObject,
+            error: false
+        })
+    });
 }
 
 exports.updateTenant = function (req, res) {

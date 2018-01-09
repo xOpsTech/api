@@ -1,3 +1,4 @@
+// import { Model } from 'mongoose';
 
 var mongoose = require('mongoose');
 var bcrypt   = require('bcrypt');
@@ -12,6 +13,15 @@ var userSchema = mongoose.Schema({
         lastname     : String,
         password     : String,
         login_method : String,
+        userType: {
+            name : String,
+            management : Boolean,
+            develop : Boolean,
+            userTypeManager : Boolean,
+            profileManager : Boolean,
+            userManager : Boolean,
+            inputSourceManager : Boolean
+        },
         tenantId : String,
         personalization : {
         timezone : String,
@@ -20,6 +30,19 @@ var userSchema = mongoose.Schema({
         }
 
 });
+
+// var userTypeSchema = mongoose.Schema({
+
+
+//     name : String,
+//     management : boolean,
+//     develop : boolean,
+//     userTypeManager : boolean,
+//     profileManager : boolean,
+//     userManager : boolean,
+//     inputSourceManager : boolean
+
+// });
 
 // methods ======================
 // generating a hash
