@@ -26,6 +26,8 @@ var _read_data = function (_index, _type, query, callback) {
   client.search({
     index: _index,
     type: _type,
+    ignoreUnavailable: true,
+    size: 100,
     body: query
   }).then(function (resp) {
     callback(resp);
