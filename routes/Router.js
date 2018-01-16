@@ -17,6 +17,7 @@ router.route('/users/:tenantId').get(api.getUserByTenantId);
 router.route('/tenant/:tenantId').put(api.updateTenant);  
 router.route('/updateuser/:userId').put(api.updateUser);
 router.route('/user/:userId').get(api.getDbUser);
+router.route('/checkuser/:userId').get(api.checkuser);
 router.route('/widget').get(api.getAllWidgets);
 
 
