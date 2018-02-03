@@ -5,26 +5,58 @@ var fs = require('fs');
 var busboy = require('connect-busboy');
 var mongodb = require('mongodb');
 var esDriver = require('../esDriver.js');
+//require express library
+var express = require('express');
+//require the express router
+var router = express.Router();
+//require multer for the file uploads
+var multer = require('multer');
+// set the directory for the uploads to the uploaded to
+
+//define the type of upload multer would be doing and pass in its destination, in our case, its a single file with the name photo
 
 var Tenant = require('../models/tenant.js');
 
-exports.uploadFiles = function (req, res) {
-    appLog.info("File uploaded by " + req.user.name);
-    var fstream;
-    req.pipe(req.busboy);
-    req.busboy.on('file', function (fieldname, file, filename) {
-        filename = (new Date().getTime()).toString() + filename;
-        console.log("Uploading: " + filename);
-        fstream = fs.createWriteStream('public/assets/img/profile/' + filename);
-        file.pipe(fstream);
-        fstream.on('close', function () {
-            res.send({
-                "path": 'public/assets/img/profile/' + filename
-            });
-        });
-    });
-}
 
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if(req.body.type =="banner")
+        {
+            cb(null, 'public/assets/img/banners/')
+        }
+        if(req.body.type =="logo")
+        {
+            cb(null, 'public/assets/img/logo/')
+        }
+    },
+    filename: function (req, file, cb) {
+        if(req.body.type =="banner")
+        {
+            cb(null,req.body.id+'_banner.png');
+        }
+        if(req.body.type =="logo")
+        {
+            cb(null,req.body.id+'_logo.png');
+        }
+    }
+  })
+
+  var upload = multer({storage: storage}).single('photo');
+exports.uploadFiles = function (req, res) {
+
+    var filename = '';
+    upload(req, res, function (err) {
+       if (err) {
+         // An error occurred when uploading
+         console.log(err);
+         return res.status(422).send("an Error occured")
+       }  
+     
+      // No error occured.
+      filename =req.file.filename;
+       return res.send(filename); 
+});
+}
 exports.getUser = function (req, res) {
 
     var email = '';
@@ -279,6 +311,27 @@ exports.getDbUser = function (req, res) {
     });
 }
 
+exports.checkuser = function (req, res) {
+    var userId = req.params.userId;
+    db_instance = db.getConnection();
+    var query = { id: userId };
+   console.log(query);
+    db_instance.collection("users").find(query).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        return res.status(200).json({
+            message: remongo_responses,
+            error: false
+        });
+
+    });
+}
+
 exports.getUserList = function (req, res) {
     db_instance = db.getConnection()
     db_instance.collection("users").find({}).toArray(function (err, remongo_responses) {
@@ -297,7 +350,7 @@ exports.getUserList = function (req, res) {
         return res.status(200).json({
             data: userObj,
             error: false
-        })
+        });
 
     });
 }
