@@ -22,7 +22,7 @@ router.route('userType/:name').put(api.updateUserType);
 router.route('/user/:userId').get(api.getDbUser);
 router.route('/checkuser/:userId').get(api.checkuser);
 router.route('/widget').get(api.getAllWidgets);
-
+router.route('/upload').post(api.uploadFiles);
 
 router.route('/scholastic/services-health').get(api.getServiceHealth);
 // router.route('/user/:userId').get(api.getUser);
