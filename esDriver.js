@@ -1,4 +1,5 @@
 var client = require('./config/connection.js');
+var dateformat = require('dateformat');
 
 var _index_data = function (_index, _type, _id, message) {
   client.index({
@@ -155,5 +156,15 @@ module.exports = {
   getItemAndPerf: function (tenantId, callback) {
     var query = `{"_source":"_id"}`
     _read_data(['metrics-' + tenantId, 'item-indicators-' + tenantId], null, query, callback);
+  },
+  getHealth: function (tenantId, callback) {
+    var query = `{"aggs":{"metricTypes":{"terms":{"field":"id.keyword"},"aggs":{"top_tag_hits":{"top_hits":{"sort":[{"timestamp":{"order":"desc"}}],"_source":{"include":[]},"size":1}}}}},"size":0}`
+    var date = new Date();
+    var today = dateformat(date, "yyyy-mm-dd")
+
+    date.setDate(date.getDate() - 1);
+    var yesterday = dateformat(date, "yyyy-mm-dd")
+    var index_array = ['health-' + tenantId + '-' + today, 'health-' + tenantId + '-' + yesterday]
+    _read_data(index_array, 'health', query, callback);
   }
 }

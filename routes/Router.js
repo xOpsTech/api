@@ -52,6 +52,8 @@ router.route('/health_configs/item_status/:tenantId').get(healthConfigs.getItemS
 router.route('/health_configs/configs/:tenantId').get(healthConfigs.getItemAndPerf);
 router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.saveItemIndicators);
 
+router.route('/health/:tenantId').get(healthConfigs.getHealth);
+
 router.route('/newrelic/map/:tenantId').get(metricsApi.getNewrelicMapData);
 
 router.use(function (req, res) {

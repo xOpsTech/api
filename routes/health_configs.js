@@ -94,3 +94,36 @@ exports.getItemAndPerf = function (req, res) {
 
     });
 };
+
+exports.getHealth = function (req, res) {
+    var tenantId = req.params.tenantId;
+    esDriver.getHealth(tenantId, function (resultJson) {
+        var total = resultJson.hits.total;
+
+        var finalResult = {
+            metrics: [],
+            error: false
+        }
+
+        try {
+            if (total != 0) {
+                var bucketList = resultJson.aggregations.metricTypes.buckets;
+                bucketList.map(function (metricTypeBucket) {
+                    var metric = { terms: [] };
+                    metric.name = metricTypeBucket.key;
+                    metric.terms = [];
+
+                    var metricTermBucket = metricTypeBucket.top_tag_hits.hits.hits[0]._source;
+                    finalResult.metrics.push(metricTermBucket);
+
+                });
+            }
+
+            return res.status(200).json(finalResult);
+        } catch (err) {
+            console.log(err);
+            finalResult.error = true;
+            return res.status(500).json(finalResult);
+        }
+    });
+};
