@@ -23,6 +23,7 @@ var tenantSchema = mongoose.Schema({
     address: String,
     phone: String,
     banner: String,
+    logo:String,
     services: [mongoose.Schema.Types.Mixed]
 });
 

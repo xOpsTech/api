@@ -5,26 +5,58 @@ var fs = require('fs');
 var busboy = require('connect-busboy');
 var mongodb = require('mongodb');
 var esDriver = require('../esDriver.js');
+//require express library
+var express = require('express');
+//require the express router
+var router = express.Router();
+//require multer for the file uploads
+var multer = require('multer');
+// set the directory for the uploads to the uploaded to
+
+//define the type of upload multer would be doing and pass in its destination, in our case, its a single file with the name photo
 
 var Tenant = require('../models/tenant.js');
 
-exports.uploadFiles = function (req, res) {
-    appLog.info("File uploaded by " + req.user.name);
-    var fstream;
-    req.pipe(req.busboy);
-    req.busboy.on('file', function (fieldname, file, filename) {
-        filename = (new Date().getTime()).toString() + filename;
-        console.log("Uploading: " + filename);
-        fstream = fs.createWriteStream('public/assets/img/profile/' + filename);
-        file.pipe(fstream);
-        fstream.on('close', function () {
-            res.send({
-                "path": 'public/assets/img/profile/' + filename
-            });
-        });
-    });
-}
 
+var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        if(req.body.type =="banner")
+        {
+            cb(null, 'public/assets/img/banners/')
+        }
+        if(req.body.type =="logo")
+        {
+            cb(null, 'public/assets/img/logo/')
+        }
+    },
+    filename: function (req, file, cb) {
+        if(req.body.type =="banner")
+        {
+            cb(null,req.body.id+'_banner.png');
+        }
+        if(req.body.type =="logo")
+        {
+            cb(null,req.body.id+'_logo.png');
+        }
+    }
+  })
+
+  var upload = multer({storage: storage}).single('photo');
+exports.uploadFiles = function (req, res) {
+
+    var filename = '';
+    upload(req, res, function (err) {
+       if (err) {
+         // An error occurred when uploading
+         console.log(err);
+         return res.status(422).send("an Error occured")
+       }  
+     
+      // No error occured.
+      filename =req.file.filename;
+       return res.send(filename); 
+});
+}
 exports.getUser = function (req, res) {
 
     var email = '';
@@ -98,6 +130,33 @@ exports.getTenantIDbytenant = function (req, res) {
             });
     };
 
+    // edit userType
+    exports.updateUserType = function (req, res) {
+        var userType = req.params.userType.name;
+        var userJson = req.body;
+        db_instance = db.getConnection()
+        db_instance.collection('userType').updateOne(
+            { id: name },
+            { $set: userTypeJson }
+            , function (err, remongo_responses) {
+                if (err) {
+                    console.log(err);
+                    return res.status(404).json({
+                        message: JSON.stringify(err),
+                        error: true
+                    });
+                }
+                console.log("1 record updated");
+                // db_instance.close();
+                return res.status(200).json({
+                    message: "record is updated successfully",
+                    error: false
+                })
+            });
+    };
+    // end
+
+
 
 exports.saveUser = function (req, res) {
     var userJson = req.body;
@@ -120,6 +179,27 @@ exports.saveUser = function (req, res) {
     });
 }
 
+// save UserType
+exports.saveUserType = function(req,res){
+    var userTypeJson=req.body;
+    db_instance=db.getConnection();
+    db_instance.collection('userType').save(userTypeJson,function(err,mongo_response){
+        if(err){
+            console.log(err);
+            return res.status(404).json({
+                message:JSON.stringify(err),
+                error:true
+            })
+        }
+        console.log("User Type has been added");
+        return res.status(201).json({
+            message:"record is saved successfully",
+            error:false
+        })
+    })
+};
+// end
+
 
 
 exports.getUserByTenantId = function(req,res){
@@ -136,15 +216,36 @@ exports.getUserByTenantId = function(req,res){
 
         var userObj = [];
         remongo_responses.map(function (user) {
-            userObj.push({ id: user.id, email: user.email, name: user.name ,password:user.password,tenantId:user.tenantId});
+            console.log('This is the response');
+            userObj.push({ id: user.id, email: user.id, name: user.name ,password:user.password,tenantId:user.tenantId,userType:user.userType});
         })
         return res.status(200).json({
             data: userObj,
             error: false
         })
-
     });
+}
 
+exports.getUserTypeByTenantId = function(req,res){
+    var tenantId = req.params.tenantId;//fjuc6xf
+    db_instance = db.getConnection()
+    db_instance.collection("userType").find({tenantId:tenantId}).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        var userTypeObject = [];
+        remongo_responses.map(function (userTypeJson) {
+            userTypeObject.push({ name: userTypeJson.name, management: userTypeJson.management, develop: userTypeJson.develop ,userTypeManager:userTypeJson.userTypeManager,profileManager:userTypeJson.profileManager,userManager:userTypeJson.userManager,inputSourceManager:userTypeJson.inputSourceManager,tenantId:userTypeJson.tenantId});
+        })
+        return res.status(200).json({
+            data: userTypeObject,
+            error: false
+        })
+    });
 }
 
 exports.updateTenant = function (req, res) {
@@ -249,7 +350,7 @@ exports.getUserList = function (req, res) {
         return res.status(200).json({
             data: userObj,
             error: false
-        })
+        });
 
     });
 }
