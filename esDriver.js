@@ -1,4 +1,5 @@
 var client = require('./config/connection.js');
+var dateformat = require('dateformat');
 
 var _index_data = function (_index, _type, _id, message) {
   client.index({
@@ -26,6 +27,8 @@ var _read_data = function (_index, _type, query, callback) {
   client.search({
     index: _index,
     type: _type,
+    ignoreUnavailable: true,
+    size: 100,
     body: query
   }).then(function (resp) {
     callback(resp);
@@ -124,18 +127,44 @@ module.exports = {
   },
   healthConfigs: function (tenantId, callback) {
     var query = { query: { match_all: {} }, _source: ["id"], size: 100 };
-    _read_data(['perf_indicators_' + tenantId, 'item_indicators_' + tenantId],'configs' , query, callback);
+    _read_data(['perf-indicators-' + tenantId, 'item-indicators-' + tenantId],'configs' , query, callback);
 
   },
   addItemIndicators: function (tenantId, itemObj) {
-    _index_data('item_indicators_' + tenantId, 'configs', itemObj.id, itemObj);
+    _index_data('item-indicators-' + tenantId, 'configs', itemObj.id, itemObj);
   },
   getItemStatus: function (tenantId, callback) {
     var query = { query: { match_all: {} }, size: 100 };
-    _read_data('item_status_' + tenantId, 'metrics', query, callback);
+    _read_data('item-status-' + tenantId, 'metrics', query, callback);
+  },
+  getMetricTerms: function (tenantId, callback) {
+    var query = {"size":0,"aggs":{"types":{"terms":{"field":"_type","size":10},"aggs":{"metric_terms":{"terms":{"field":"id.keyword","size":10}}}}}};
+    _read_data('metrics-' + tenantId, null, query, callback);
   },
   newrelicMapData: function (tenantId, callback) {
     var query = {"size":0,"aggs":{"location":{"terms":{"field":"locationLabel.keyword","size":10},"aggs":{"app":{"terms":{"field":"monitorName.keyword","size":10},"aggs":{"top":{"top_hits":{"sort":[{"timestamp":{"order":"desc"}}],"_source":{"includes":["locationCoordinates","monitorName","duration","locationLabel"]},"size":1}}}}}}}};
     _read_data('metrics-' + tenantId, 'newrelic-synthetics', query, callback);
+  },
+  getItemIndicator: function (tenantId, itemId, callback) {
+    var query = `{"query":{"term":{"_id":"${itemId}"}}}`
+    _read_data('item-indicators-' + tenantId, 'configs', query, callback);
+  },
+  getLatestMetricValue: function (tenantId, metricId, callback) {
+    var query = `{"query":{"bool":{"must":[{"term":{"monitorId.keyword":{"value":"${metricId}"}}},{"range":{"timestamp":{"gte":"now-94d"}}}]}},"sort":[{"timestamp":{"order":"desc"}}],"_source":["duration"],"size":1}`
+    _read_data('metrics-' + tenantId, null, query, callback);
+  },
+  getItemAndPerf: function (tenantId, callback) {
+    var query = `{"_source":"_id"}`
+    _read_data(['metrics-' + tenantId, 'item-indicators-' + tenantId], null, query, callback);
+  },
+  getHealth: function (tenantId, callback) {
+    var query = `{"aggs":{"metricTypes":{"terms":{"field":"id.keyword"},"aggs":{"top_tag_hits":{"top_hits":{"sort":[{"timestamp":{"order":"desc"}}],"_source":{"include":[]},"size":1}}}}},"size":0}`
+    var date = new Date();
+    var today = dateformat(date, "yyyy-mm-dd")
+
+    date.setDate(date.getDate() - 1);
+    var yesterday = dateformat(date, "yyyy-mm-dd")
+    var index_array = ['health-' + tenantId + '-' + today, 'health-' + tenantId + '-' + yesterday]
+    _read_data(index_array, 'health', query, callback);
   }
 }
