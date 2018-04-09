@@ -97,9 +97,9 @@ module.exports = {
     var query = { "size": 0, "aggs": { "metricTypes": { "terms": { "field": "source.keyword" }, "aggs": { "top_tag_hits": { "top_hits": { "sort": [{ "timestamp": { "order": "desc" } }], "_source": { "include": ["source", "sourceStatus"] }, "size": 1 } } } } } };
     _read_data('scholastic', 'metrics', query, callback);
   },
-  alertStats: function (callback) {
+  alertStats: function (tenantId,callback) {
     var query = { "aggs": { "severity": { "terms": { "field": "severity" } } }, "size": 0 };
-    _read_data('live_alert_index', 'alert', query, callback);
+    _read_data('live_alert_index_'+ tenantId , 'alert', query, callback);
 
   },
   allPrograms: function (callback) {

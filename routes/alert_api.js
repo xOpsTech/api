@@ -42,7 +42,9 @@ exports.getTenantAlerts = function (req, res) {
 };
 
 exports.getAlertStats = function (req, res) {
-    esDriver.alertStats(function (resultJson) {
+    var tenantId = req.params.tenantId;
+    
+    esDriver.alertStats(tenantId, function (resultJson) {
         var bucketList = resultJson.aggregations.severity.buckets;
 
         var finalResult = {
