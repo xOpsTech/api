@@ -5,6 +5,7 @@ var metricsApi = require("./metrics_api");
 var programApi = require("./product_api");
 var servicenow = require("./servicenow_api")
 var healthConfigs = require("./health_configs")
+var techConfigs = require("./tech")
 
 var router = require('express').Router();
 router.route('/user').get(api.getUser);
@@ -58,6 +59,10 @@ router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.sav
 router.route('/health/:tenantId').get(healthConfigs.getHealth);
 
 router.route('/newrelic/map/:tenantId').get(metricsApi.getNewrelicMapData);
+
+//servers and clouds
+router.route('/tech/servers/').get(techConfigs.getServerDetails);
+router.route('/tech/clouds/').get(techConfigs.getCloudDetails);
 
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
