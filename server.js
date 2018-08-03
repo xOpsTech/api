@@ -27,7 +27,8 @@ var express = require('express'),
     db = require('./routes/DBConnection'),
     apiroute = require('./routes/Router'),
     cors = require('cors'),
-    User = require('./models/user'); // get our mongoose model
+    User = require('./models/user');
+    Tenant = require('./models/tenant');  // get our mongoose model
 bcrypt = require('bcrypt');
 jwt = require('jsonwebtoken');
 
@@ -100,7 +101,11 @@ app.post('/login', function (req, res) {
     User.findOne({
         id: req.body.id
     }, function (err, user) {
-        if (err) throw err;
+        
+        Tenant.findOne({
+            id: user.tenantId
+        },function (err, tenant) {
+      
         if (!user) {
             res.json({ success: false, message: 'Authentication failed. User not found.' });
         } else if (user) {
@@ -109,7 +114,8 @@ app.post('/login', function (req, res) {
                 res.json({ success: false, message: 'Authentication failed. Wrong password.' });
             } else {
                 var payload = {
-                    user: user
+                    user: user,
+                    tenant:tenant
                 }
                 var token = jwt.sign(payload, app.get('superSecret'), {
                     expiresIn: 86400 // expires in 24 hours
@@ -125,6 +131,7 @@ app.post('/login', function (req, res) {
         }
 
     });
+});
 });
 
 app.use(function (req, res, next) {
