@@ -6,8 +6,6 @@ var programApi = require("./product_api");
 var servicenow = require("./servicenow_api")
 var healthConfigs = require("./health_configs");
 var techConfigs = require("./tech");
-var detailConfigs = require('./details');
-
 
 var router = require('express').Router();
 
