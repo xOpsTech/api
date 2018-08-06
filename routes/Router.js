@@ -73,6 +73,9 @@ router.route('/newrelic/map/:tenantId').get(metricsApi.getNewrelicMapData);
 //servers and clouds
 router.route('/tech/servers/').get(techConfigs.getServerDetails);
 router.route('/tech/clouds/').get(techConfigs.getCloudDetails);
+router.route('/tech/applications/').get(techConfigs.getApplicationDetails);
+router.route('/tech/databases/').get(techConfigs.getDatabaseDetails);
+router.route('/tech/storage/').get(techConfigs.getStorageDetails);
 
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
