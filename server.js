@@ -1,9 +1,12 @@
 // add this to the VERY top of the first file loaded in your app
 var opbeat = require('opbeat').start({
-  appId: '76df634138',
-  organizationId: 'e3fec2012b8a419b92f0296a608021df',
-  secretToken: '5ad1e8c24a99a4960cfcbc6c12864f6332236bff'
+    appId: '76df634138',
+    organizationId: 'e3fec2012b8a419b92f0296a608021df',
+    secretToken: '5ad1e8c24a99a4960cfcbc6c12864f6332236bff'
 })
+//put 'dev' or 'prod'
+   process.NODE_ENV = 'dev';
+
 
 var express = require('express'),
     favicon = require('serve-favicon'),
@@ -14,7 +17,6 @@ var express = require('express'),
     routes = require('./routes'),
     passport = require('passport'),
 
-    user = require('./routes/user'),
     api = require("./routes/api");
     http = require('http'),
     dbCon = require('./routes/DBConnection'),
@@ -25,15 +27,15 @@ var express = require('express'),
     db = require('./routes/DBConnection'),
     apiroute = require('./routes/Router'),
     cors = require('cors'),
-    User   = require('./models/user'); // get our mongoose model
-    bcrypt   = require('bcrypt');
-    jwt    = require('jsonwebtoken');
-    // userApi = require('./routes/project.js'),
-    // testApi = require('./routes/tests.js')
-    ;
+    User = require('./models/user');
+    Tenant = require('./models/tenant');  // get our mongoose model
+bcrypt = require('bcrypt');
+jwt = require('jsonwebtoken');
+
+;
 var mongoose = require('mongoose');
 
-var flash    = require('connect-flash');
+var flash = require('connect-flash');
 
 require('./config/passport-local')(passport);
 require('./config/passport')(passport);
@@ -58,7 +60,7 @@ app.set('port', process.env.PORT || 4200);
 app.set('views', __dirname + '/views');
 app.engine('html', require('ejs').renderFile);
 
-app.use(favicon(__dirname + '/public/assets/img/favicon.ico'));
+app.use(favicon(__dirname + '/public/favicon.ico'));
 var jsonParser = bodyParser.json();
 var urlencodedParser = bodyParser.urlencoded({
     extended: false
@@ -66,16 +68,8 @@ var urlencodedParser = bodyParser.urlencoded({
 
 
 app.use(cookieParser());
-app.use(session({
-    cookieName: 'session',
-    secret: 'nkjn;&*((&^$%#&^(*',
-    duration: 4 * 60 * 60 * 1000,
-    activeDuration: 4 * 60 * 60 * 1000,
-    httpOnly: true,
-    secure: true
-}));
 app.use(passport.initialize());
-app.use(passport.session());
+
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 app.use(busboy());
@@ -83,106 +77,74 @@ app.use(flash());
 app.use(express.static(path.join(__dirname, '/public')));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
-// app.use('/api/', isLoggedIn, apiroute);
-app.use('/api/', apiroute);
-app.set('superSecret', 'ilovescotchyscotch');
+app.use('/api/', verifyToken, apiroute);
+app.set('superSecret', 'xopssupersecretkeythatnobodyshouldknow');
 
 // Add the Opbeat middleware after your regular middleware
 app.use(opbeat.middleware.express())
 
 app.get('/', routes.index);
 app.set('view engine', 'ejs');
-  app.get('/signup', function(req, res) {
+app.get('/signup', function (req, res) {
 
-app.set('view engine', 'ejs');
+    app.set('view engine', 'ejs');
     res.render('signup.ejs', { message: req.flash('signupMessage') });
 });
 app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect : '/login', // redirect to the secure profile section
-    failureRedirect : '/signup',// redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+    successRedirect: '/login', // redirect to the secure profile section
+    failureRedirect: '/signup',// redirect back to the signup page if there is an error
+    failureFlash: true // allow flash messages
 
 }));
 
-// app.get('/login', function(req, res) {
-//     // render the page and pass in any flash data if it exists
-//     res.render('login.ejs', { message: req.flash('loginMessage') });
-// });
-// app.post('/login', passport.authenticate('local-login', {
-//     successRedirect : '/', // redirect to the secure profile section
-//     failureRedirect : '/login', // redirect back to the signup page if there is an error
-//     failureFlash : true // allow flash messages
-// }));
-
-/*app.get('/alert', isLoggedIn, routes.index);
-app.get('/dashboard', isLoggedIn, routes.index);
-app.get('/incident', isLoggedIn, routes.index);
-app.get('/settings', isLoggedIn, routes.index);
-app.get('/map', isLoggedIn, routes.index);
-app.get('/rssfeed', isLoggedIn, routes.index);
-*/
-
-app.post('/login',function(req, res){   
-User.findOne({
+app.post('/login', function (req, res) {
+    User.findOne({
         id: req.body.id
-    }, function(err, user) {
-        if (err) throw err;
+    }, function (err, user) {
+        
+        Tenant.findOne({
+            id: user.tenantId
+        },function (err, tenant) {
+      
         if (!user) {
             res.json({ success: false, message: 'Authentication failed. User not found.' });
         } else if (user) {
             // check if password matches
-            if (!bcrypt.compareSync(req.body.password,user.password)) {
+            if (!bcrypt.compareSync(req.body.password, user.password)) {
                 res.json({ success: false, message: 'Authentication failed. Wrong password.' });
             } else {
                 var payload = {
-                    user: req.body.id  
+                    user: user,
+                    tenant:tenant
                 }
                 var token = jwt.sign(payload, app.get('superSecret'), {
                     expiresIn: 86400 // expires in 24 hours
-                });              
+                });
                 res.json({
                     success: true,
-                    message: 'Enjoy your token!', 
-                    token: token                 
+                    message: 'Enjoy your token!',
+                    token: token
                 });
-            }     
+                console.log(token)
+            }
 
         }
 
     });
 });
-
-app.use(function(req, res, next) {
-    // check header or url parameters or post parameters for token
-    // console.log(req.headers['token']);
-    var token = req.header.token || req.param('token') || req.headers['token'];
-    // decode token
-    if (token) {
-        // verifies secret and checks exp
-        jwt.verify(token, app.get('superSecret'), function(err, decoded) {          
-            if (err) {
-                return res.json({ success: false, message: 'Failed to authenticate token.' });      
-            } else {
-                // if everything is good, save to request for use in other routes
-                req.decoded = decoded;  
-                next();
-            }
-        });
-    } else {
-        // if there is no token
-        // return an error
-        return res.status(403).send({ 
-            success: false, 
-            message: 'No token provided.'
-        });        
-    }    
 });
 
-app.get('/notallowed',endSession ,routes.notallowed);
+app.use(function (req, res, next) {
+    // check header or url parameters or post parameters for token
+    // console.log(req.headers['token']);
+
+});
+
+app.get('/notallowed', endSession, routes.notallowed);
 
 app.get('/user', api.getDbUser);
 
-app.get('/logout', function(req, res) {
+app.get('/logout', function (req, res) {
     req.logout();
     res.redirect('/');
 });
@@ -195,38 +157,49 @@ app.get('/auth/google/callback', passport.authenticate('google', {
     failureRedirect: '/notallowed'
 }));
 global.db = dbCon.getConnection();
-http.createServer(app).listen(app.get('port'), function() {
+http.createServer(app).listen(app.get('port'), function () {
     console.log('Express server listening on port ' + app.get('port'));
 });
-app.get('/previous_route/:requestedurl', function(req,res){
+app.get('/previous_route/:requestedurl', function (req, res) {
     var url = req.params.requestedurl;
     var originalUrl = url.replace("login", "");
     req.session.previousUrl = originalUrl;
     res.send("done");
 });
-// function isLoggedIn(req, res, next) {
-//     if (process.env.NODE_ENV === 'dev') {
-//         return next();
-//     }
 
-//     // if user is authenticated in the session, carry on
-//     if (req.isAuthenticated()) {
-//         req.session.access_token = req.user.token;
-//         if (req.session.previousUrl !== undefined) {
-//             var url = req.session.previousUrl;
-//             req.session.previousUrl = undefined;
-//             res.redirect(url);
-//         } else {
+function endSession(req, res, next) {
+    res.clearCookie('passport');
+    next();
+}
 
-//             return next();
-//         }
+//Verify the Token
+function verifyToken(req, res, next) {//Get auth header value
 
-//     } else {
-//         res.redirect('/login');
-//     }
-// }
 
-function endSession( req, res, next) {
-	res.clearCookie('passport');
-	next();
+    if (process.NODE_ENV == "dev") {
+        return next()
+    }
+    else {
+        var token = req.header.token || req.param('token') || req.headers['token'];
+        // decode token
+        if (token) {
+            // verifies secret and checks exp
+            jwt.verify(token, app.get('superSecret'), function (err, decoded) {
+                if (err) {
+                    return res.json({ success: false, message: 'Failed to authenticate token.' });
+                } else {
+                    // if everything is good, save to request for use in other routes
+                    req.decoded = decoded;
+                    next();
+                }
+            });
+        } else {
+            // if there is no token
+            // return an error
+            return res.status(403).send({
+                success: false,
+                message: 'No token provided.'
+            });
+        }
+    }
 }
