@@ -99,7 +99,8 @@ module.exports = {
   },
   alertStats: function (tenantId,callback) {
     var query = { "aggs": { "severity": { "terms": { "field": "severity" } } }, "size": 0 };
-    _read_data('live_alert_index_'+ tenantId , 'alert', query, callback);
+
+    _read_data('live_alert_index_'+tenantId, 'alert', query, callback);
 
   },
   allPrograms: function (callback) {
@@ -108,12 +109,12 @@ module.exports = {
     _read_data('program_data', 'program', query, callback);
 
   },
-  alertTrend: function (hours, callback) {
+  alertTrend: function (hours,tenantId,callback) {
     var query = { "query": { "range": { "raisedTimestamp": { "gte": "now-6h", "lte": "now" } } }, "aggs": { "severity": { "terms": { "field": "severity" }, "aggs": { "alerts": { "date_histogram": { "field": "raisedTimestamp", "interval": "hour", "format": "h:mma", "min_doc_count": 0, "extended_bounds": { "min": "now-6h", "max": "now" } } } } } }, "size": 0 };
     var replacedValue = "now-%sh".replace("%s", hours);
     query.query.range.raisedTimestamp.gte = replacedValue;
     query.aggs.severity.aggs.alerts.date_histogram.extended_bounds.min = replacedValue;
-    _read_data('live_alert_index', 'alert', query, callback);
+    _read_data('live_alert_index_'+tenantId, 'alert', query, callback);
 
   },
   alertCount: function (reqObj, callback) {

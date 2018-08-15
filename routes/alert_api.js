@@ -43,8 +43,11 @@ exports.getTenantAlerts = function (req, res) {
 
 exports.getAlertStats = function (req, res) {
     var tenantId = req.params.tenantId;
-    
-    esDriver.alertStats(tenantId, function (resultJson) {
+
+
+    esDriver.alertStats(tenantId,function (resultJson) {
+
+
         var bucketList = resultJson.aggregations.severity.buckets;
 
         var finalResult = {
@@ -71,7 +74,9 @@ exports.getAlertStats = function (req, res) {
 
 exports.getAlertTrend = function (req, res) {
     var hours = req.query.hours;
-    esDriver.alertTrend(hours, function (resultJson) {
+    var tenantId = req.params.tenantId;
+
+    esDriver.alertTrend(hours,tenantId, function (resultJson) {
         // var finalResult = {
         //     alert_trend: { "warning": [], "critical": [] },
         //     error: false
