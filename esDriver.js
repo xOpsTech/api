@@ -109,7 +109,6 @@ module.exports = {
 
   },
   alertTrend: function (hours,tenantId,callback) {
-    tenantId= "qdjj0vp"
     var query = { "query": { "range": { "raisedTimestamp": { "gte": "now-6h", "lte": "now" } } }, "aggs": { "severity": { "terms": { "field": "severity" }, "aggs": { "alerts": { "date_histogram": { "field": "raisedTimestamp", "interval": "hour", "format": "h:mma", "min_doc_count": 0, "extended_bounds": { "min": "now-6h", "max": "now" } } } } } }, "size": 0 };
     var replacedValue = "now-%sh".replace("%s", hours);
     query.query.range.raisedTimestamp.gte = replacedValue;
