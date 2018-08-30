@@ -99,6 +99,7 @@ module.exports = {
   },
   alertStats: function (tenantId,callback) {
     var query = { "aggs": { "severity": { "terms": { "field": "severity" } } }, "size": 0 };
+
     _read_data('live_alert_index_'+tenantId, 'alert', query, callback);
 
   },

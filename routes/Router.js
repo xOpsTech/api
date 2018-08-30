@@ -45,11 +45,13 @@ router.route('/metrics/wpt').get(alertApi.getMetrics);
 router.route('/alerts/:tenantId').get(alertApi.getTenantAlerts);
 
 router.route('/alerts/stats/:tenantId').get(alertApi.getAlertStats);
+
 router.route('/alerts/:tenantId/trend').get(alertApi.getAlertTrend);
 
 router.route('/alerts/:tenantId').get(alertApi.getAlerts);
+
 router.route('/alerts/trend').get(alertApi.getAlertTrend);
-router.route('/alerts/:tenantId').get(alertApi.getAlerts);
+router.route('/alerts/:tenantId').get(alertApi.getTenantAlerts);
 router.route('/alerts/myalerts').get(alertApi.myAlerts);
 
 router.route('/alerts').post(alertApi.saveAlerts);
