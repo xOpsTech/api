@@ -30,7 +30,9 @@ router.route('/tenant').post(api.saveTenant);
 
 router.route('/chart').post(api.addchart); 
 router.route('/chart/:tenantId').get(api.getcharts); 
-
+router.route('/chartbyid/:chid').get(api.getChartById); 
+router.route('/updatechartbyid/:chid').put(api.updateChartById); 
+router.route('/deletechart/:chid').delete(api.deleteChartById); 
 
 router.route('/tenant/:tenantId').put(api.updateTenant);  
 router.route('/user/:userId').put(api.updateUser);

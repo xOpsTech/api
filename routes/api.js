@@ -20,10 +20,55 @@ var Chart = require('../models/chart.js');
 
 exports.addchart = function (req, res) {
     var tenantJson = req.body;
-    console.log(tenantJson)
     db_instance = db.getConnection()
     db_instance.collection('charts').save(
         tenantJson 
+        , function (err, remongo_responses) {
+            if (err) {
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        });
+};
+
+
+exports.getcharts = function (req, res) {
+    var tenant = req.params.tenantId;
+    var query = { tenant: tenant };
+    db_instance = db.getConnection()
+    db_instance.collection('charts').find(query).toArray(function (err, result) {
+        return res.json(result)
+      
+        });
+};
+
+
+exports.getChartById = function (req, res) {
+    var chid = req.params.chid;
+    var query = { chid: chid };
+    db_instance = db.getConnection()
+    db_instance.collection('charts').find(query).toArray(function (err, result) {
+        return res.json(result)
+        });
+};
+
+exports.updateChartById = function (req, res) {
+    var chid = req.params.chid;
+    var charJson = req.body;
+    console.log("charJson " + charJson)
+    console.log("chid " + chid);
+
+    db_instance = db.getConnection()
+    db_instance.collection('charts').updateOne(
+        { chid: chid },
+        { $set: charJson }
         , function (err, remongo_responses) {
             if (err) {
                 console.log(err);
@@ -41,18 +86,29 @@ exports.addchart = function (req, res) {
         });
 };
 
-
-exports.getcharts = function (req, res) {
-    var tenant = req.params.tenantId;
-    console.log(tenant)
-    var query = { tenant: tenant };
+exports.deleteChartById = function (req, res) {
+    var chid = req.params.chid;
+    var myquery = { chid: chid };
     db_instance = db.getConnection()
-    db_instance.collection('charts').find(query).toArray(function (err, result) {
-        console.log(result)
-        return res.json(result)
-      
+    db_instance.collection('charts').remove(
+        myquery
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record deleted");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is deleted successfully",
+                error: false
+            })
         });
 };
+
 
 
 var storage = multer.diskStorage({
@@ -258,6 +314,7 @@ exports.getUserByTenantId = function (req, res) {
         })
     });
 }
+
 
 exports.getdatasources = function (req, res) {
     var dataSources = {
