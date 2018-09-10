@@ -320,36 +320,96 @@ exports.getdatasources = function (req, res) {
     var dataSources = {
 
         "DataSources": {
+            "Tools":{
 
             "Zabbix":
 
-            {
-                "Data1": ['Server1', 'Server2', 'Server3', 'Server4', 'Server5'],
-                "Data2": {"Series1" : [5, 7, 3, 9, 10]}
-            },
+            { 
+                "Items" :
+                {
+                    "MercuryApp":
+                 {
+                     "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                    }
+                 },
+                 "CelestialApp":
+                 {
+                    "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                    }
+                 },
+                 
+              
+            }
+        },
             "NetCrunch":
 
             {
-                "Data1": ['Application1', 'Application2', 'Application3', 'Application4', 'Application5'],
-                "Data2": {
-                    "Series1" :[5, 7, 3, 9, 10],
-                    "Series2" : [9, 6, 3, 4, 12]
-                }
+                "Items" :
+                {
+                    "MercuryApp":
+                 {
+                    "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                 }
+                },
+                 "CelestialApp":
+                 {
+                    "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                    }
             },
-            "Nagios":
-
-            {
-                "Data1": ['Cloud1', 'Cloud2', 'Cloud3', 'Cloud4', 'Cloud5'],
-                "Data2": {"Series1" : [6, 7, 3, 9, 10]}
+         
             },
-            "Icinga":
-
-            {
-                "Data1": ['Database1', 'Database2', 'Database3', 'Database4', 'Database5'],
-                "Data2": {"Series1" : [9, 7, 3, 9, 10]}
-            },
-
         }
+    }
+}
+
     }
     return res.json(dataSources)
 }
