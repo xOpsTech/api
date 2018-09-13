@@ -16,46 +16,135 @@ var multer = require('multer');
 //define the type of upload multer would be doing and pass in its destination, in our case, its a single file with the name photo
 
 var Tenant = require('../models/tenant.js');
+var Chart = require('../models/chart.js');
+
+exports.addchart = function (req, res) {
+    var tenantJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('charts').save(
+        tenantJson 
+        , function (err, remongo_responses) {
+            if (err) {
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        });
+};
+
+
+exports.getcharts = function (req, res) {
+    var tenant = req.params.tenantId;
+    var query = { tenant: tenant };
+    db_instance = db.getConnection()
+    db_instance.collection('charts').find(query).toArray(function (err, result) {
+        return res.json(result)
+      
+        });
+};
+
+
+exports.getChartById = function (req, res) {
+    var chid = req.params.chid;
+    var query = { chid: chid };
+    db_instance = db.getConnection()
+    db_instance.collection('charts').find(query).toArray(function (err, result) {
+        return res.json(result)
+        });
+};
+
+exports.updateChartById = function (req, res) {
+    var chid = req.params.chid;
+    var charJson = req.body;
+    console.log("charJson " + charJson)
+    console.log("chid " + chid);
+
+    db_instance = db.getConnection()
+    db_instance.collection('charts').updateOne(
+        { chid: chid },
+        { $set: charJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        });
+};
+
+exports.deleteChartById = function (req, res) {
+    var chid = req.params.chid;
+    var myquery = { chid: chid };
+    db_instance = db.getConnection()
+    db_instance.collection('charts').remove(
+        myquery
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record deleted");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is deleted successfully",
+                error: false
+            })
+        });
+};
+
 
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        if(req.body.type =="banner")
-        {
+        if (req.body.type == "banner") {
             cb(null, 'public/assets/img/banners/')
         }
-        if(req.body.type =="logo")
-        {
+        if (req.body.type == "logo") {
             cb(null, 'public/assets/img/logo/')
         }
     },
     filename: function (req, file, cb) {
-        if(req.body.type =="banner")
-        {
-            cb(null,req.body.id+'_banner.png');
+        if (req.body.type == "banner") {
+            cb(null, req.body.id + '_banner.png');
         }
-        if(req.body.type =="logo")
-        {
-            cb(null,req.body.id+'_logo.png');
+        if (req.body.type == "logo") {
+            cb(null, req.body.id + '_logo.png');
         }
     }
-  })
+})
 
-  var upload = multer({storage: storage}).single('photo');
+var upload = multer({ storage: storage }).single('photo');
 exports.uploadFiles = function (req, res) {
 
     var filename = '';
     upload(req, res, function (err) {
-       if (err) {
-         // An error occurred when uploading
-         console.log(err);
-         return res.status(422).send("an Error occured")
-       }  
-     
-      // No error occured.
-      filename =req.file.filename;
-       return res.send(filename); 
-});
+        if (err) {
+            // An error occurred when uploading
+            console.log(err);
+            return res.status(422).send("an Error occured")
+        }
+
+        // No error occured.
+        filename = req.file.filename;
+        return res.send(filename);
+    });
 }
 exports.getUser = function (req, res) {
 
@@ -90,7 +179,7 @@ exports.getTenantIDbytenant = function (req, res) {
         }
         try {
             if (typeof result[0] !== 'undefined') {
-               finalResult.tenantId = result[0]["id"]
+                finalResult.tenantId = result[0]["id"]
             }
             return res.status(200).json({
                 tenantId: finalResult.tenantId,
@@ -102,59 +191,59 @@ exports.getTenantIDbytenant = function (req, res) {
             finalResult.error = true;
             return res.status(500).json(finalResult);
         }
-           
+
+    });
+}
+
+exports.updateUser = function (req, res) {
+    var id = req.params.userId;
+    var userJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('users').updateOne(
+        { id: id },
+        { $set: userJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
         });
-    }
+};
 
-    exports.updateUser = function (req, res) {
-        var id = req.params.userId;
-        var userJson = req.body;
-        db_instance = db.getConnection()
-        db_instance.collection('users').updateOne(
-            { id: id },
-            { $set: userJson }
-            , function (err, remongo_responses) {
-                if (err) {
-                    console.log(err);
-                    return res.status(404).json({
-                        message: JSON.stringify(err),
-                        error: true
-                    });
-                }
-                console.log("1 record updated");
-                // db_instance.close();
-                return res.status(200).json({
-                    message: "record is updated successfully",
-                    error: false
-                })
-            });
-    };
-
-    // edit userType
-    exports.updateUserType = function (req, res) {
-        var userType = req.params.userType.name;
-        var userJson = req.body;
-        db_instance = db.getConnection()
-        db_instance.collection('userType').updateOne(
-            { id: name },
-            { $set: userTypeJson }
-            , function (err, remongo_responses) {
-                if (err) {
-                    console.log(err);
-                    return res.status(404).json({
-                        message: JSON.stringify(err),
-                        error: true
-                    });
-                }
-                console.log("1 record updated");
-                // db_instance.close();
-                return res.status(200).json({
-                    message: "record is updated successfully",
-                    error: false
-                })
-            });
-    };
-    // end
+// edit userType
+exports.updateUserType = function (req, res) {
+    var userType = req.params.userType.name;
+    var userJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('userType').updateOne(
+        { id: name },
+        { $set: userTypeJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        });
+};
+// end
 
 
 
@@ -180,21 +269,21 @@ exports.saveUser = function (req, res) {
 }
 
 // save UserType
-exports.saveUserType = function(req,res){
-    var userTypeJson=req.body;
-    db_instance=db.getConnection();
-    db_instance.collection('userType').save(userTypeJson,function(err,mongo_response){
-        if(err){
+exports.saveUserType = function (req, res) {
+    var userTypeJson = req.body;
+    db_instance = db.getConnection();
+    db_instance.collection('userType').save(userTypeJson, function (err, mongo_response) {
+        if (err) {
             console.log(err);
             return res.status(404).json({
-                message:JSON.stringify(err),
-                error:true
+                message: JSON.stringify(err),
+                error: true
             })
         }
         console.log("User Type has been added");
         return res.status(201).json({
-            message:"record is saved successfully",
-            error:false
+            message: "record is saved successfully",
+            error: false
         })
     })
 };
@@ -202,10 +291,10 @@ exports.saveUserType = function(req,res){
 
 
 
-exports.getUserByTenantId = function(req,res){
+exports.getUserByTenantId = function (req, res) {
     var tenantId = req.params.tenantId;//fjuc6xf
     db_instance = db.getConnection()
-    db_instance.collection("users").find({tenantId:tenantId}).toArray(function (err, remongo_responses) {
+    db_instance.collection("users").find({ tenantId: tenantId }).toArray(function (err, remongo_responses) {
         if (err) {
             console.log(err);
             return res.status(404).json({
@@ -217,7 +306,7 @@ exports.getUserByTenantId = function(req,res){
         var userObj = [];
         remongo_responses.map(function (user) {
             console.log('This is the response');
-            userObj.push({ id: user.id, email: user.id, name: user.name ,password:user.password,tenantId:user.tenantId,userType:user.userType});
+            userObj.push({ id: user.id, email: user.id, name: user.name, password: user.password, tenantId: user.tenantId, userType: user.userType });
         })
         return res.status(200).json({
             data: userObj,
@@ -226,10 +315,109 @@ exports.getUserByTenantId = function(req,res){
     });
 }
 
-exports.getUserTypeByTenantId = function(req,res){
+
+exports.getdatasources = function (req, res) {
+    var dataSources = {
+
+        "DataSources": {
+            "Tools":{
+
+            "Zabbix":
+
+            { 
+                "Items" :
+                {
+                    "MercuryApp":
+                 {
+                     "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                    }
+                 },
+                 "CelestialApp":
+                 {
+                    "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                    }
+                 },
+                 
+              
+            }
+        },
+            "NetCrunch":
+
+            {
+                "Items" :
+                {
+                    "MercuryApp":
+                 {
+                    "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                 }
+                },
+                 "CelestialApp":
+                 {
+                    "Metrics" : {
+                     "CPU" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Memory" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
+                     },
+                     "Connections" :{
+                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
+                     }
+                    }
+            },
+         
+            },
+        }
+    }
+}
+
+    }
+    return res.json(dataSources)
+}
+
+exports.getUserTypeByTenantId = function (req, res) {
     var tenantId = req.params.tenantId;//fjuc6xf
     db_instance = db.getConnection()
-    db_instance.collection("userType").find({tenantId:tenantId}).toArray(function (err, remongo_responses) {
+    db_instance.collection("userType").find({ tenantId: tenantId }).toArray(function (err, remongo_responses) {
         if (err) {
             console.log(err);
             return res.status(404).json({
@@ -239,7 +427,7 @@ exports.getUserTypeByTenantId = function(req,res){
         }
         var userTypeObject = [];
         remongo_responses.map(function (userTypeJson) {
-            userTypeObject.push({ name: userTypeJson.name, management: userTypeJson.management, develop: userTypeJson.develop ,userTypeManager:userTypeJson.userTypeManager,profileManager:userTypeJson.profileManager,userManager:userTypeJson.userManager,inputSourceManager:userTypeJson.inputSourceManager,tenantId:userTypeJson.tenantId});
+            userTypeObject.push({ name: userTypeJson.name, management: userTypeJson.management, develop: userTypeJson.develop, userTypeManager: userTypeJson.userTypeManager, profileManager: userTypeJson.profileManager, userManager: userTypeJson.userManager, inputSourceManager: userTypeJson.inputSourceManager, tenantId: userTypeJson.tenantId });
         })
         return res.status(200).json({
             data: userTypeObject,
@@ -315,7 +503,7 @@ exports.checkuser = function (req, res) {
     var userId = req.params.userId;
     db_instance = db.getConnection();
     var query = { id: userId };
-   console.log(query);
+    console.log(query);
     db_instance.collection("users").find(query).toArray(function (err, remongo_responses) {
         if (err) {
             console.log(err);

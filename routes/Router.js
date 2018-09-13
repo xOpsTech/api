@@ -15,7 +15,7 @@ router.route('/user').get(api.getUser);
 router.route('/user/_list').get(api.getUserList);
 router.route('/user/:userId').get(api.getDbUser);
 router.route('/users/:tenantId').get(api.getUserByTenantId);
-
+router.route('/getsources').get(api.getdatasources);
 router.route('/gettenant/:tenant').get(api.getTenantIDbytenant); 
 router.route('/userType/:tenantId').get(api.getUserTypeByTenantId)
 router.route('/tenant/:userId').get(api.getTenantByUserId); 
@@ -28,6 +28,11 @@ router.route('/user').post(api.saveUser);
 router.route('/userType').post(api.saveUserType);
 router.route('/tenant').post(api.saveTenant);   
 
+router.route('/chart').post(api.addchart); 
+router.route('/chart/:tenantId').get(api.getcharts); 
+router.route('/chartbyid/:chid').get(api.getChartById); 
+router.route('/updatechartbyid/:chid').put(api.updateChartById); 
+router.route('/deletechart/:chid').delete(api.deleteChartById); 
 
 router.route('/tenant/:tenantId').put(api.updateTenant);  
 router.route('/user/:userId').put(api.updateUser);
