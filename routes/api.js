@@ -414,6 +414,9 @@ exports.getdatasources = function (req, res) {
     return res.json(dataSources)
 }
 
+
+
+
 exports.getUserTypeByTenantId = function (req, res) {
     var tenantId = req.params.tenantId;//fjuc6xf
     db_instance = db.getConnection()
@@ -460,6 +463,93 @@ exports.updateTenant = function (req, res) {
         })
 }
 
+
+exports.updateDashboard = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var tenantJson = req.body;
+    db_instance = db.getConnection()
+    db_instance.collection('dashboard').updateOne(
+        { id: tenantId },
+        { $set: tenantJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        })
+}
+
+exports.saveDashboard = function (req, res) {
+    var dashboardJson = req.body;
+    db_instance = db.getConnection();
+    db_instance.collection('dashboard').save(dashboardJson, function (err, mongo_response) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            })
+        }
+        console.log("Dashboard has been added");
+        return res.status(201).json({
+            message: "record is saved successfully",
+            error: false
+        })
+    })
+};
+
+exports.getDashboard = function (req, res) {
+    var tenantId = req.params.tenantId;
+    db_instance = db.getConnection();
+    var query = { tenantId: tenantId };
+    console.log(query);
+    db_instance.collection("dashboard").find(query).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        return res.status(200).json({
+            message: remongo_responses,
+            error: false
+        });
+
+    });
+}
+
+
+exports.getDashboardDetailsByTopic = function (req, res) {
+    var id = req.params.id;
+    console.log(id)
+    db_instance = db.getConnection();
+    var query2 = { _id: id };
+    console.log(query2);
+    db_instance.collection("dashboard").find(query2).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        return res.status(200).json({
+            message: remongo_responses,
+            error: false
+        });
+
+    });
+}
 exports.getAllWidgets = function (req, res) {
     db_instance = db.getConnection()
     db_instance.collection("widgets").find({}).toArray(function (err, remongo_responses) {
