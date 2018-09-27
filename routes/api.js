@@ -4,6 +4,7 @@ var assert = require('assert');
 var fs = require('fs');
 var busboy = require('connect-busboy');
 var mongodb = require('mongodb');
+var mongoose = require('mongoose');
 var esDriver = require('../esDriver.js');
 //require express library
 var express = require('express');
@@ -17,6 +18,7 @@ var multer = require('multer');
 
 var Tenant = require('../models/tenant.js');
 var Chart = require('../models/chart.js');
+var Dashboard = require('../models/dashboard.js');
 
 exports.addchart = function (req, res) {
     var tenantJson = req.body;
@@ -468,7 +470,7 @@ exports.updateDashboard = function (req, res) {
     var tenantId = req.params.tenantId;
     var tenantJson = req.body;
     db_instance = db.getConnection()
-    db_instance.collection('dashboard').updateOne(
+    db_instance.collection('dashboards').updateOne(
         { id: tenantId },
         { $set: tenantJson }
         , function (err, remongo_responses) {
@@ -488,31 +490,14 @@ exports.updateDashboard = function (req, res) {
         })
 }
 
-exports.saveDashboard = function (req, res) {
-    var dashboardJson = req.body;
-    db_instance = db.getConnection();
-    db_instance.collection('dashboard').save(dashboardJson, function (err, mongo_response) {
-        if (err) {
-            console.log(err);
-            return res.status(404).json({
-                message: JSON.stringify(err),
-                error: true
-            })
-        }
-        console.log("Dashboard has been added");
-        return res.status(201).json({
-            message: "record is saved successfully",
-            error: false
-        })
-    })
-};
+
 
 exports.getDashboard = function (req, res) {
     var tenantId = req.params.tenantId;
     db_instance = db.getConnection();
     var query = { tenantId: tenantId };
     console.log(query);
-    db_instance.collection("dashboard").find(query).toArray(function (err, remongo_responses) {
+    db_instance.collection("dashboards").find(query).toArray(function (err, remongo_responses) {
         if (err) {
             console.log(err);
             return res.status(404).json({
@@ -530,12 +515,17 @@ exports.getDashboard = function (req, res) {
 
 
 exports.getDashboardDetailsByTopic = function (req, res) {
-    var id = req.params.id;
-    console.log(id)
+    var id ="";
+    if(req.params.id!=null || req.params.id!="undefined")
+    {
+        this.id= req.params.id;
+    }
+
     db_instance = db.getConnection();
-    var query2 = { _id: id };
+  
+    var query2 = {'id':this.id};
     console.log(query2);
-    db_instance.collection("dashboard").find(query2).toArray(function (err, remongo_responses) {
+    db_instance.collection("dashboards").find(query2).toArray(function (err, remongo_responses) {
         if (err) {
             console.log(err);
             return res.status(404).json({
@@ -550,6 +540,32 @@ exports.getDashboardDetailsByTopic = function (req, res) {
 
     });
 }
+
+exports.updateDashboardById = function (req, res) {
+    var chid = req.params.id;
+    var charJson = req.body;
+
+    db_instance = db.getConnection()
+    db_instance.collection('dashboards').updateOne(
+        { id: id },
+        { $set: charJson }
+        , function (err, remongo_responses) {
+            if (err) {
+                console.log(err);
+                return res.status(404).json({
+                    message: JSON.stringify(err),
+                    error: true
+                });
+            }
+            console.log("1 record updated");
+            // db_instance.close();
+            return res.status(200).json({
+                message: "record is updated successfully",
+                error: false
+            })
+        });
+};
+
 exports.getAllWidgets = function (req, res) {
     db_instance = db.getConnection()
     db_instance.collection("widgets").find({}).toArray(function (err, remongo_responses) {
@@ -674,6 +690,27 @@ exports.saveTenant = function (req, res) {
         })
     });
 }
+
+exports.saveDashboard = function (req, res) {
+    var dashboardJson = req.body;
+    var newDashboard = Dashboard(dashboardJson);
+    console.log(newDashboard)
+
+    newDashboard.save(function (err, newDashboard) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            })
+        }
+        console.log("Dashboard has been added");
+        return res.status(201).json({
+            message: "record is saved successfully",
+            error: false
+        })
+    })
+};
 
 exports.getTenantByUserId = function (req, res) {
     var userId = req.params.userId;

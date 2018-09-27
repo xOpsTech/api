@@ -5,7 +5,7 @@ var opbeat = require('opbeat').start({
     secretToken: '5ad1e8c24a99a4960cfcbc6c12864f6332236bff'
 })
 //put 'dev' or 'prod'
-   process.NODE_ENV = 'dev';
+process.NODE_ENV = 'dev';
 
 
 var express = require('express'),
@@ -18,7 +18,7 @@ var express = require('express'),
     passport = require('passport'),
 
     api = require("./routes/api");
-    http = require('http'),
+http = require('http'),
     dbCon = require('./routes/DBConnection'),
     path = require('path'),
     log4js = require('log4js'),
@@ -28,7 +28,7 @@ var express = require('express'),
     apiroute = require('./routes/Router'),
     cors = require('cors'),
     User = require('./models/user');
-    Tenant = require('./models/tenant');  // get our mongoose model
+Tenant = require('./models/tenant');  // get our mongoose model
 bcrypt = require('bcrypt');
 jwt = require('jsonwebtoken');
 
@@ -90,6 +90,7 @@ app.get('/signup', function (req, res) {
     app.set('view engine', 'ejs');
     res.render('signup.ejs', { message: req.flash('signupMessage') });
 });
+
 app.post('/signup', passport.authenticate('local-signup', {
     successRedirect: '/login', // redirect to the secure profile section
     failureRedirect: '/signup',// redirect back to the signup page if there is an error
@@ -101,38 +102,37 @@ app.post('/login', function (req, res) {
     User.findOne({
         id: req.body.id
     }, function (err, user) {
-        
-        Tenant.findOne({
-            id: user.tenantId
-        },function (err, tenant) {
-      
         if (!user) {
             res.json({ success: false, message: 'Authentication failed. User not found.' });
-        } else if (user) {
-            // check if password matches
-            if (!bcrypt.compareSync(req.body.password, user.password)) {
-                res.json({ success: false, message: 'Authentication failed. Wrong password.' });
-            } else {
-                var payload = {
-                    user: user,
-                    tenant:tenant
-                }
-                var token = jwt.sign(payload, app.get('superSecret'), {
-                    expiresIn: 86400 // expires in 24 hours
-                });
-                res.json({
-                    success: true,
-                    message: 'Enjoy your token!',
-                    token: token
-                });
-                console.log(token)
-            }
-
         }
 
-    });
-});
-});
+        else if (user) {
+            Tenant.findOne({
+                id: user.tenantId
+            }, function (err, tenant) {
+                // check if password matches
+                if (!bcrypt.compareSync(req.body.password, user.password)) {
+                    res.json({ success: false, message: 'Authentication failed. Wrong password.' });
+                } else {
+                    var payload = {
+                        user: user,
+                        tenant: tenant
+                    }
+                    var token = jwt.sign(payload, app.get('superSecret'), {
+                        expiresIn: 86400 // expires in 24 hours
+                    });
+                    res.json({
+                        success: true,
+                        message: 'Enjoy your token!',
+                        token: token
+                    });
+                    console.log(token)
+                }
+
+            })
+        }
+    })
+        });
 
 app.use(function (req, res, next) {
     // check header or url parameters or post parameters for token

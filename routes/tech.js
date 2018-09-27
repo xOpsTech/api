@@ -127,12 +127,12 @@ exports.getServerDetails = function (req, res) {
             {
                 "name": "Server 03",
                 "strength": 3,
-                "color": "green"
+                "color": "red"
             },
             {
                 "name": "Server 03",
                 "strength": 3,
-                "color": "green"
+                "color": "red"
             },
             {
                 "name": "Server 03",
