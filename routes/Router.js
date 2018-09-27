@@ -86,6 +86,10 @@ router.route('/tech/applications/').get(techConfigs.getApplicationDetails);
 router.route('/tech/databases/').get(techConfigs.getDatabaseDetails);
 router.route('/tech/storage/').get(techConfigs.getStorageDetails);
 
+router.route('/dashboard').post(api.saveDashboard);
+router.route('/dashboard/links/:tenantId/').get(api.getDashboard);
+router.route('/dashboardbyid/:id').get(api.getDashboardDetailsByTopic);
+router.route('/updatedashboard/:id').put(api.updateDashboardById); 
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
 });
