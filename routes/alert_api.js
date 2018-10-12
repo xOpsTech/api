@@ -43,10 +43,11 @@ exports.getTenantAlerts = function (req, res) {
 
 exports.getAlertStats = function (req, res) {
     var tenantId = req.params.tenantId;
-
+    console.log('asasdasdasdasdasdasdasdasdasdsd')
 
     esDriver.alertStats(tenantId,function (resultJson) {
 
+        console.log('asasdasdasdasdasdasdasdasdasdsd')
 
         var bucketList = resultJson.aggregations.severity.buckets;
 
@@ -54,7 +55,7 @@ exports.getAlertStats = function (req, res) {
             severity_stats: { "warning": 0, "critical": 0, "info": 0 },
             error: false
         }
-
+        try {
         bucketList.map(function (severityResult) {
             var severity = severityResult.key;
             var count = severityResult.doc_count;
@@ -66,8 +67,14 @@ exports.getAlertStats = function (req, res) {
                 finalResult.severity_stats.critical = count
             }
         });
-
+        console.log('asasdasdasdasdasdasdasdasdasdsd')
         return res.status(200).json(finalResult);
+    }
+    catch (err) {
+        console.log('asasdasdasdasdasdasdasdasdasdsd')
+        finalResult.error = true;
+        return res.status(500).json(finalResult);
+    }
 
     });
 };

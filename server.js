@@ -142,7 +142,7 @@ app.use(function (req, res, next) {
 
 app.get('/notallowed', endSession, routes.notallowed);
 
-app.get('/user', api.getDbUser);
+//pp.get('/user', api.getDbUser);
 
 app.get('/logout', function (req, res) {
     req.logout();

@@ -13,6 +13,7 @@ var dashboardSchema = mongoose.Schema({
         name :String,
         href : String
     }],
+    permission:[]
 });
 
 

@@ -11,15 +11,16 @@ var router = require('express').Router();
 
 //GET METHODS
 
-router.route('/user').get(api.getUser);
+//router.route('/user').get(api.getUser);
 router.route('/user/_list').get(api.getUserList);
-router.route('/user/:userId').get(api.getDbUser);
+router.route('/userbyid/:userId').get(api.getUserById);
 router.route('/users/:tenantId').get(api.getUserByTenantId);
+router.route('/tenant/:tenantId').get(api.getTenantDetailsByTenantID);
 router.route('/getsources').get(api.getdatasources);
 router.route('/gettenant/:tenant').get(api.getTenantIDbytenant); 
 router.route('/userType/:tenantId').get(api.getUserTypeByTenantId)
 router.route('/tenant/:userId').get(api.getTenantByUserId); 
-router.route('/checkuser/:userId').get(api.checkuser);
+//router.route('/checkuser/:userId').get(api.checkuser);
   
 router.route('/widget').get(api.getAllWidgets);
 
@@ -29,7 +30,7 @@ router.route('/userType').post(api.saveUserType);
 router.route('/tenant').post(api.saveTenant);   
 
 router.route('/chart').post(api.addchart); 
-router.route('/chart/:tenantId').get(api.getcharts); 
+router.route('/charts').get(api.getcharts); 
 router.route('/chartbyid/:chid').get(api.getChartById); 
 router.route('/updatechartbyid/:chid').put(api.updateChartById); 
 router.route('/deletechart/:chid').delete(api.deleteChartById); 
@@ -87,9 +88,11 @@ router.route('/tech/databases/').get(techConfigs.getDatabaseDetails);
 router.route('/tech/storage/').get(techConfigs.getStorageDetails);
 
 router.route('/dashboard').post(api.saveDashboard);
+router.route('/dashboard/linksbyperm').post(api.getDashboardByPermission);
 router.route('/dashboard/links/:tenantId/').get(api.getDashboard);
 router.route('/dashboardbyid/:id').get(api.getDashboardDetailsByTopic);
 router.route('/updatedashboard/:id').put(api.updateDashboardById); 
+router.route('/dashboard/:id').delete(api.deleteDashboardById);
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
 });

@@ -292,13 +292,32 @@ exports.saveUserType = function (req, res) {
 // end
 
 
+exports.getTenantDetailsByTenantID = function (req, res) {
+    var tenantId = req.params.tenantId;
+    db_instance = db.getConnection();
+    var query = { id: tenantId  };
+
+    db_instance.collection("tenants").find(query).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        return res.status(200).json({
+            message: remongo_responses,
+            error: false
+        });
+
+    });
+}
 
 exports.getUserByTenantId = function (req, res) {
     var tenantId = req.params.tenantId;//fjuc6xf
     db_instance = db.getConnection()
     db_instance.collection("users").find({ tenantId: tenantId }).toArray(function (err, remongo_responses) {
         if (err) {
-            console.log(err);
             return res.status(404).json({
                 message: JSON.stringify(err),
                 error: true
@@ -307,7 +326,6 @@ exports.getUserByTenantId = function (req, res) {
 
         var userObj = [];
         remongo_responses.map(function (user) {
-            console.log('This is the response');
             userObj.push({ id: user.id, email: user.id, name: user.name, password: user.password, tenantId: user.tenantId, userType: user.userType });
         })
         return res.status(200).json({
@@ -495,7 +513,7 @@ exports.updateDashboard = function (req, res) {
 exports.getDashboard = function (req, res) {
     var tenantId = req.params.tenantId;
     db_instance = db.getConnection();
-    var query = { tenantId: tenantId };
+    var query = { tenantId: tenantId  };
     console.log(query);
     db_instance.collection("dashboards").find(query).toArray(function (err, remongo_responses) {
         if (err) {
@@ -511,6 +529,55 @@ exports.getDashboard = function (req, res) {
         });
 
     });
+}
+exports.getDashboardByPermission = function (req, res) {
+    //var tenantId = req.params.tenantId;
+   var permissions = req.body
+    db_instance = db.getConnection();
+    var query = {"permission" : { $in : permissions  } };
+    console.log(query);
+    db_instance.collection("dashboards").find(query).toArray(function (err, remongo_responses) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        return res.status(200).json({
+            message: remongo_responses,
+            error: false
+        });
+
+    });
+}
+
+exports.deleteDashboardById = function(req,res)
+{
+   var dashid = req.params.id;
+   console.log(dashid)
+   query = {id :dashid }
+   db_instance = db.getConnection()
+   db_instance.collection("dashboards").remove(query,function(err,mongoResponse)
+{
+    if(err)
+    {
+        console.log(err);
+        return res.status(404).json({
+            message: JSON.stringify(err),
+            error: true
+        });
+    }
+    else{
+        console.log(err);
+        return res.status(200).json({
+            message: "record deleted successfully",
+            error: false
+        });
+    }
+})
+
+
 }
 
 
@@ -584,12 +651,13 @@ exports.getAllWidgets = function (req, res) {
     });
 }
 
-exports.getDbUser = function (req, res) {
-    var userId = req.decoded.user;
+exports.getUserById = function (req, res) {
+    var userId = req.params.userId;
     db_instance = db.getConnection();
     var query = { id: userId };
-
+    console.log(userId)
     db_instance.collection("users").find(query).toArray(function (err, remongo_responses) {
+        console.log(remongo_responses)
         if (err) {
             console.log(err);
             return res.status(404).json({
