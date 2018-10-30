@@ -1,0 +1,19 @@
+es_host: elastic.xops.it
+es_port: 9200
+name: Example rule test
+type: any
+index: test_alert
+num_events: 1
+timeframe:
+    seconds: 4
+filter:
+- term:
+    my_data.username: "pasi"
+alert:
+- pagerduty
+pagerduty_service_key: "R010AU9GQ0VOQPKGBBGQSST4011L17SH"
+pagerduty_client_name: "xView"
+pagerduty_incident_key: "alert_subject {0}, {1}"
+pagerduty_incident_key_args:
+- <alert_subject_arg_1>
+- <alert_subject_arg_2>

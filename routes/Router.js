@@ -35,7 +35,8 @@ router.route('/chartbyid/:chid').get(api.getChartById);
 router.route('/updatechartbyid/:chid').put(api.updateChartById); 
 router.route('/deletechart/:chid').delete(api.deleteChartById); 
 
-router.route('/tenant/:tenantId').put(api.updateTenant);  
+router.route('/tenant/:tenantId').put(api.updateTenant); 
+ 
 router.route('/user/:userId').put(api.updateUser);
 router.route('userType/:name').put(api.updateUserType);
 
@@ -86,15 +87,21 @@ router.route('/tech/clouds/').get(techConfigs.getCloudDetails);
 router.route('/tech/applications/').get(techConfigs.getApplicationDetails);
 router.route('/tech/databases/').get(techConfigs.getDatabaseDetails);
 router.route('/tech/storage/').get(techConfigs.getStorageDetails);
+router.route('/deletetool/:tenantId').put(api.deleteAlertingTool);
 
 router.route('/dashboard').post(api.saveDashboard);
 router.route('/dashboard/linksbyperm').post(api.getDashboardByPermission);
 router.route('/dashboard/links/:tenantId/').get(api.getDashboard);
 router.route('/dashboardbyid/:id').get(api.getDashboardDetailsByTopic);
 router.route('/updatedashboard/:id').put(api.updateDashboardById); 
+router.route('/elastalert/pagerduty/:tenantId').put(api.elastAlertPagerDuty); 
+router.route('/elastalert/email/:tenantId').put(api.elastAlertEmail); 
+
 router.route('/dashboard/:id').delete(api.deleteDashboardById);
 router.use(function (req, res) {
     res.status('404').send("resource not found").end();
 });
+
+
 
 module.exports = router;
