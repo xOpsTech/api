@@ -8,6 +8,8 @@ var mongoose = require('mongoose');
 var esDriver = require('../esDriver.js');
 //require express library
 var express = require('express');
+var client = require('../config/connection.js');
+const YAML = require('json-to-pretty-yaml');
 //require the express router
 var router = express.Router();
 //require multer for the file uploads
@@ -24,7 +26,7 @@ exports.addchart = function (req, res) {
     var tenantJson = req.body;
     db_instance = db.getConnection()
     db_instance.collection('charts').save(
-        tenantJson 
+        tenantJson
         , function (err, remongo_responses) {
             if (err) {
                 return res.status(404).json({
@@ -47,8 +49,8 @@ exports.getcharts = function (req, res) {
     db_instance = db.getConnection()
     db_instance.collection('charts').find(query).toArray(function (err, result) {
         return res.json(result)
-      
-        });
+
+    });
 };
 
 
@@ -58,7 +60,7 @@ exports.getChartById = function (req, res) {
     db_instance = db.getConnection()
     db_instance.collection('charts').find(query).toArray(function (err, result) {
         return res.json(result)
-        });
+    });
 };
 
 exports.updateChartById = function (req, res) {
@@ -295,7 +297,7 @@ exports.saveUserType = function (req, res) {
 exports.getTenantDetailsByTenantID = function (req, res) {
     var tenantId = req.params.tenantId;
     db_instance = db.getConnection();
-    var query = { id: tenantId  };
+    var query = { id: tenantId };
 
     db_instance.collection("tenants").find(query).toArray(function (err, remongo_responses) {
         if (err) {
@@ -340,95 +342,95 @@ exports.getdatasources = function (req, res) {
     var dataSources = {
 
         "DataSources": {
-            "Tools":{
+            "Tools": {
 
-            "Zabbix":
+                "Zabbix":
 
-            { 
-                "Items" :
                 {
-                    "MercuryApp":
-                 {
-                     "Metrics" : {
-                     "CPU" :{
-                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Memory" :{
-                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Connections" :{
-                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
-                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
-                     }
-                    }
-                 },
-                 "CelestialApp":
-                 {
-                    "Metrics" : {
-                     "CPU" :{
-                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Memory" :{
-                        "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Connections" :{
-                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
-                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
-                     }
-                    }
-                 },
-                 
-              
-            }
-        },
-            "NetCrunch":
+                    "Items":
+                    {
+                        "MercuryApp":
+                        {
+                            "Metrics": {
+                                "CPU": {
+                                    "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Memory": {
+                                    "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Connections": {
+                                    "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                                    "Data2": { "Series1": [100, 23, 43, 54, 10] }
+                                }
+                            }
+                        },
+                        "CelestialApp":
+                        {
+                            "Metrics": {
+                                "CPU": {
+                                    "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Memory": {
+                                    "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Connections": {
+                                    "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                                    "Data2": { "Series1": [100, 23, 43, 54, 10] }
+                                }
+                            }
+                        },
 
-            {
-                "Items" :
-                {
-                    "MercuryApp":
-                 {
-                    "Metrics" : {
-                     "CPU" :{
-                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Memory" :{
-                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Connections" :{
-                        "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
-                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
-                     }
-                 }
+
+                    }
                 },
-                 "CelestialApp":
-                 {
-                    "Metrics" : {
-                     "CPU" :{
-                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Memory" :{
-                        "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
-                        "Data2": {"Series1" : [50, 70, 31, 92, 10]}
-                     },
-                     "Connections" :{
-                        "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
-                        "Data2": {"Series1" : [100, 23, 43, 54, 10]}
-                     }
-                    }
-            },
-         
-            },
+                "NetCrunch":
+
+                {
+                    "Items":
+                    {
+                        "MercuryApp":
+                        {
+                            "Metrics": {
+                                "CPU": {
+                                    "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Memory": {
+                                    "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Connections": {
+                                    "Data1": ['dne03prod1', 'dne03prod2', 'dne03prod3', 'dne03prod4', 'dne03prod5'],
+                                    "Data2": { "Series1": [100, 23, 43, 54, 10] }
+                                }
+                            }
+                        },
+                        "CelestialApp":
+                        {
+                            "Metrics": {
+                                "CPU": {
+                                    "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Memory": {
+                                    "Data1": ['b3erprod1', 'b3erprod2', 'b3er3prod3', 'b3erprod4', 'b3erprod5'],
+                                    "Data2": { "Series1": [50, 70, 31, 92, 10] }
+                                },
+                                "Connections": {
+                                    "Data1": ['b3erprod1', 'b3erprod2', 'b3erprod3', 'b3erprod4', 'b3erprod5'],
+                                    "Data2": { "Series1": [100, 23, 43, 54, 10] }
+                                }
+                            }
+                        },
+
+                    },
+                }
+            }
         }
-    }
-}
 
     }
     return res.json(dataSources)
@@ -483,6 +485,51 @@ exports.updateTenant = function (req, res) {
         })
 }
 
+exports.deleteAlertingTool = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var alertTool = req.body.tool;
+
+    if (alertTool == "pagerduty") {
+        db_instance = db.getConnection()
+        db_instance.collection('tenants').updateOne({ _id: tenantId }, { $unset: { "pagerduty": "" } }
+            , function (err, remongo_responses) {
+                if (err) {
+                    console.log(err);
+                    return res.status(404).json({
+                        message: JSON.stringify(err),
+                        error: true
+                    });
+                }
+                console.log("1 record updated");
+                // db_instance.close();
+                return res.status(200).json({
+                    message: "record is updated successfully",
+                    error: false
+                })
+            })
+    }
+    else {
+        db_instance = db.getConnection()
+        db_instance.collection('tenants').updateOne({ _id: tenantId }, { $unset: { "email": "" } }
+            , function (err, remongo_responses) {
+                if (err) {
+                    console.log(err);
+                    return res.status(404).json({
+                        message: JSON.stringify(err),
+                        error: true
+                    });
+                }
+                console.log("1 record updated");
+                // db_instance.close();
+                return res.status(200).json({
+                    message: "record is updated successfully",
+                    error: false
+                })
+            })
+    }
+
+}
+
 
 exports.updateDashboard = function (req, res) {
     var tenantId = req.params.tenantId;
@@ -508,12 +555,111 @@ exports.updateDashboard = function (req, res) {
         })
 }
 
+exports.elastAlertPagerDuty = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var tenantJson = req.body;
 
+
+    client.indices.create({
+        index: 'test_alert_' + tenantId
+    }, function (err, resp, status) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log("create", resp);
+        }
+    });
+    console.log(tenantJson)
+    pagerDutyServiceJson = {
+        "es_host": "localhost",
+        "es_port": 9200,
+        'name': 'Example any rule',
+        'type': "any",
+        'num_events': 1,
+        "timeframe": { "seconds": 4 },
+        "index": "test_alert_" + tenantId,
+        "filter": [{ "term": { "my_data.username": "keminda" } }],
+        "alert": ["pagerduty"],
+        "pagerduty_service_key": tenantJson.pagerduty.pagerdutyservicekey,//98c140832fa642649c71a508035cc44d
+        "pagerduty_client_name": tenantJson.pagerduty.pagerdutyclientname//xops
+    }
+
+    const data = YAML.stringify(pagerDutyServiceJson);
+    fs.writeFile('/Users/kemindasamaraweera/elastalert/example_rules/test.yaml', data, (err) => {
+        if (err) throw err;
+        else {
+            const util = require('util');
+            const exec = util.promisify(require('child_process').exec);
+
+            async function ls() {
+                const { stdout, stderr } = await exec('ls');
+                console.log('stdout:', stdout);
+                console.log('stderr:', stderr);
+            }
+            ls();
+            return res.status(200).json({
+                message: "pagerduty Inserted",
+                error: false
+            });
+        }
+    })
+
+}
+
+exports.elastAlertEmail = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var tenantJson = req.body;
+
+    EmailServiceJson = {
+        "es_host": "localhost",
+        "es_port": 9200,
+        'name': 'Example Alerting Rule ',
+        'type': "any",
+        'num_events': 1,
+        "timeframe": { "seconds": 4 },
+        "index": "alerting_index",
+        "filter": [{ "term": { "my_data.status": "warning" } }],
+        "alert": ["email"],
+        "email": [tenantJson.email.emailaddress],
+        'smtp_host': tenantJson.email.smtpserver,
+        "smtp_port": 465,
+        "smtp_ssl": true,
+        "from_addr": 'keminda309821@gmail.com',
+        "smtp_auth_file": 'smtp_auth_file.yaml',	
+        "alert_subject": "[{0}] {1} on {2}",
+        "alert_subject_args": [
+            "my_data.status",
+            "my_data.event_type",
+            "my_data.server"
+        ],
+        "alert_text": "Application: Xops (Xview) Staging,\nTrigger: Service logstash is down on xviews0312,\nTrigger status: PROBLEM,\nTrigger severity: Critical,\nHost: xviews0312 \n"
+    }
+
+    const data = YAML.stringify(EmailServiceJson);
+    fs.writeFile('./elastalert/example_rules/test.yaml', data, (err) => {
+        if (err) throw err;
+        else {
+            const util = require('util');
+            const exec = util.promisify(require('child_process').exec);
+
+            async function ls() {
+                const { stdout, stderr } = await exec('python -m elastalert.elastalert --verbose --rule ./elastalert/example_rules/test.yaml --config ./elastalert/config.yaml');
+            }
+            ls();
+            return res.status(200).json({
+                message: "email Inserted",
+                error: false
+            });
+        }
+    })
+
+}
 
 exports.getDashboard = function (req, res) {
     var tenantId = req.params.tenantId;
     db_instance = db.getConnection();
-    var query = { tenantId: tenantId  };
+    var query = { tenantId: tenantId };
     console.log(query);
     db_instance.collection("dashboards").find(query).toArray(function (err, remongo_responses) {
         if (err) {
@@ -532,9 +678,9 @@ exports.getDashboard = function (req, res) {
 }
 exports.getDashboardByPermission = function (req, res) {
     //var tenantId = req.params.tenantId;
-   var permissions = req.body
+    var permissions = req.body
     db_instance = db.getConnection();
-    var query = {"permission" : { $in : permissions  } };
+    var query = { "permission": { $in: permissions } };
     console.log(query);
     db_instance.collection("dashboards").find(query).toArray(function (err, remongo_responses) {
         if (err) {
@@ -552,45 +698,41 @@ exports.getDashboardByPermission = function (req, res) {
     });
 }
 
-exports.deleteDashboardById = function(req,res)
-{
-   var dashid = req.params.id;
-   console.log(dashid)
-   query = {id :dashid }
-   db_instance = db.getConnection()
-   db_instance.collection("dashboards").remove(query,function(err,mongoResponse)
-{
-    if(err)
-    {
-        console.log(err);
-        return res.status(404).json({
-            message: JSON.stringify(err),
-            error: true
-        });
-    }
-    else{
-        console.log(err);
-        return res.status(200).json({
-            message: "record deleted successfully",
-            error: false
-        });
-    }
-})
+exports.deleteDashboardById = function (req, res) {
+    var dashid = req.params.id;
+    console.log(dashid)
+    query = { id: dashid }
+    db_instance = db.getConnection()
+    db_instance.collection("dashboards").remove(query, function (err, mongoResponse) {
+        if (err) {
+            console.log(err);
+            return res.status(404).json({
+                message: JSON.stringify(err),
+                error: true
+            });
+        }
+        else {
+            console.log(err);
+            return res.status(200).json({
+                message: "record deleted successfully",
+                error: false
+            });
+        }
+    })
 
 
 }
 
 
 exports.getDashboardDetailsByTopic = function (req, res) {
-    var id ="";
-    if(req.params.id!=null || req.params.id!="undefined")
-    {
-        this.id= req.params.id;
+    var id = "";
+    if (req.params.id != null || req.params.id != "undefined") {
+        this.id = req.params.id;
     }
 
     db_instance = db.getConnection();
-  
-    var query2 = {'id':this.id};
+
+    var query2 = { 'id': this.id };
     console.log(query2);
     db_instance.collection("dashboards").find(query2).toArray(function (err, remongo_responses) {
         if (err) {

@@ -1,0 +1,20 @@
+es_host: "localhost"
+es_port: 9200
+name: "Example any rule"
+type: "any"
+num_events: 1
+timeframe:
+  seconds: 4
+index: "alerting_index"
+filter:
+  - term:
+      my_data.username: "keminda"
+alert:
+  - "email"
+email:
+- "tks3098@gmail.com"
+smtp_host: 'smtp.gmail.com'
+smtp_port: 465
+smtp_ssl : true
+from_addr: 'keminda309821@gmail.com'
+smtp_auth_file: smtp_auth_file.yaml

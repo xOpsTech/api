@@ -19,25 +19,23 @@ var serviceSchema = mongoose.Schema({
 var tenantSchema = mongoose.Schema({
     _id: String,
     id: { type: String, unique: true },
-    tenant: { type: String, required: true },
+    tenant: { type: String, required: true ,unique: true},
     address: String,
     phone: String,
     banner: String,
     logo:String,
     healthitems:Array,
-    services: [mongoose.Schema.Types.Mixed]
+    services: [mongoose.Schema.Types.Mixed],
+    alertingtools: [mongoose.Schema.Types.Mixed],
 });
 
 tenantSchema.pre('save', function (next) {
     if (!this.id) {
-        // this.id = shortid.generate();
         this.id = randomstring.generate(7).toLowerCase();
-        console.log("11111 : "+ this.id)
     }
     this._id = this.id;
     next();
 });
-
 
 // create the model for tenant and expose it to our app
 var Tenant = mongoose.model('Tenant', tenantSchema);
