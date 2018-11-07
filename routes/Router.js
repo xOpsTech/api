@@ -11,7 +11,6 @@ var router = require('express').Router();
 
 //GET METHODS
 
-//router.route('/user').get(api.getUser);
 router.route('/user/_list').get(api.getUserList);
 router.route('/userbyid/:userId').get(api.getUserById);
 router.route('/users/:tenantId').get(api.getUserByTenantId);

@@ -83,20 +83,20 @@ app.set('superSecret', 'xopssupersecretkeythatnobodyshouldknow');
 // Add the Opbeat middleware after your regular middleware
 app.use(opbeat.middleware.express())
 
-app.get('/', routes.index);
-app.set('view engine', 'ejs');
-app.get('/signup', function (req, res) {
+// app.get('/', routes.index);
+// app.set('view engine', 'ejs');
+// app.get('/signup', function (req, res) {
 
-    app.set('view engine', 'ejs');
-    res.render('signup.ejs', { message: req.flash('signupMessage') });
-});
+//     app.set('view engine', 'ejs');
+//     res.render('signup.ejs', { message: req.flash('signupMessage') });
+// });
 
-app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect: '/login', // redirect to the secure profile section
-    failureRedirect: '/signup',// redirect back to the signup page if there is an error
-    failureFlash: true // allow flash messages
+// app.post('/signup', passport.authenticate('local-signup', {
+//     successRedirect: '/login', // redirect to the secure profile section
+//     failureRedirect: '/signup',// redirect back to the signup page if there is an error
+//     failureFlash: true // allow flash messages
 
-}));
+// }));
 
 app.post('/login', function (req, res) {
     User.findOne({
@@ -134,13 +134,12 @@ app.post('/login', function (req, res) {
     })
         });
 
-app.use(function (req, res, next) {
-    // check header or url parameters or post parameters for token
-    // console.log(req.headers['token']);
+// app.use(function (req, res, next) {
+//     console.log(req.headers['token']);
 
-});
+// });
 
-app.get('/notallowed', endSession, routes.notallowed);
+//app.get('/notallowed', endSession, routes.notallowed);
 
 //pp.get('/user', api.getDbUser);
 
@@ -167,10 +166,10 @@ app.get('/previous_route/:requestedurl', function (req, res) {
     res.send("done");
 });
 
-function endSession(req, res, next) {
-    res.clearCookie('passport');
-    next();
-}
+// function endSession(req, res, next) {
+//     res.clearCookie('passport');
+//     next();
+// }
 
 //Verify the Token
 function verifyToken(req, res, next) {//Get auth header value
