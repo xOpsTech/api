@@ -83,7 +83,8 @@ app.set('superSecret', 'xopssupersecretkeythatnobodyshouldknow');
 // Add the Opbeat middleware after your regular middleware
 app.use(opbeat.middleware.express())
 
-// app.get('/', routes.index);
+app.get('/', routes.index);
+
 // app.set('view engine', 'ejs');
 // app.get('/signup', function (req, res) {
 

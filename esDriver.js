@@ -52,6 +52,10 @@ var _count = function (_index, _type, query, callback) {
 };
 
 module.exports = {
+  addElast:function (dataJson) {
+    var tenantId = dataJson.tenantId;
+    _index_data('live_alert_index'+tenantId, 'alert', tenantId, projectObj);
+  },
   addProject: function (projectObj) {
     var userId = projectObj.userId;
     _index_data('user', 'project', userId, projectObj);
@@ -154,9 +158,32 @@ module.exports = {
     var query = `{"query":{"bool":{"must":[{"term":{"monitorId.keyword":{"value":"${metricId}"}}},{"range":{"timestamp":{"gte":"now-94d"}}}]}},"sort":[{"timestamp":{"order":"desc"}}],"_source":["duration"],"size":1}`
     _read_data('metrics-' + tenantId, null, query, callback);
   },
-  getItemAndPerf: function (tenantId, callback) {
-    var query = `{"_source":"_id"}`
-    _read_data(['metrics-' + tenantId, 'item-indicators-' + tenantId], null, query, callback);
+  getPerformaceIndicators: function (tenantId, callback) {
+    var query =  {
+     "size": 0,
+      "aggs": {
+       "brands_field1": {
+    "terms": {
+     "field": "monitorId.keyword",
+      "size": 15
+      },
+      "aggs": {
+       "my_field_top_hits1": {
+      "top_hits": {
+      "size": 1
+       }
+      }
+       }
+      }
+     }
+      };
+  // _read_data("item-indicators-" + tenantId, ['newrelic-synthetics','configs'], query, callback);
+    _read_data("metrics-" + tenantId, ['newrelic-synthetics','configs'], query, callback);
+  },
+  getItems: function (tenantId, callback) {
+    var query = { query: { match_all: {} }, size: 1 };
+    
+    _read_data("item-indicators-" + tenantId, ['newrelic-synthetics','configs'], query, callback)
   },
   getHealth: function (tenantId, callback) {
     var query = `{"aggs":{"metricTypes":{"terms":{"field":"id.keyword"},"aggs":{"top_tag_hits":{"top_hits":{"sort":[{"timestamp":{"order":"desc"}}],"_source":{"include":[]},"size":1}}}}},"size":0}`

@@ -63,38 +63,64 @@ exports.getMetricTerms = function (req, res) {
 };
 
 
-exports.getItemAndPerf = function (req, res) {
+exports.getPerformaceIndicators = function (req, res) {
     var tenantId = req.params.tenantId;
-    esDriver.getItemAndPerf(tenantId, function (resultJson) {
-        var hitsArray = resultJson.hits.hits;
+    esDriver.getPerformaceIndicators(tenantId, function (resultJson) {
+        var hitsArray = resultJson.aggregations.brands_field1.buckets;
 
         var finalResult = {
             result: {
-                "items": [],
-                "perf": []
+                "perfs": []
             },
             error: false
         }
-
         try {
             hitsArray.map(function (hit) {
-                var configId = hit._id;
-                if (hit._type === "configs") {
-                    finalResult.result.items.push(configId);
-                } else {
-                    finalResult.result.perf.push(configId);
-                }
+            var configId = hit.my_field_top_hits1.hits.hits[0]._source.monitorName +"-"+hit.my_field_top_hits1.hits.hits[0]._source.locationLabel;
+            finalResult.result.perfs.push(configId);
             });
             return res.status(200).json(finalResult);
-        } catch (err) {
+        }
+         
+       catch (err) {
             console.log(err);
             finalResult.error = true;
             return res.status(500).json(finalResult);
         }
 
-    });
-};
+  
+});
+}
 
+exports.getItems = function (req, res) {
+
+    var tenantId = req.params.tenantId;
+    esDriver.getItems(tenantId, function (resultJson) {
+    var hitsArray = resultJson.hits.hits;
+
+    var finalResult = {
+        result: {
+            "items": []
+        },
+        error: false
+    }
+
+    try {
+        hitsArray.map(function (val) {
+           
+            finalResult.result.items.push(val._source.id);
+        });
+        return res.status(200).json(finalResult);
+    } catch (err) {
+        console.log(err);
+        finalResult.error = true;
+        return res.status(500).json(finalResult);
+    }
+
+});
+
+
+}
 exports.getHealth = function (req, res) {
     var tenantId = req.params.tenantId;
     esDriver.getHealth(tenantId, function (resultJson) {

@@ -14,6 +14,8 @@ const YAML = require('json-to-pretty-yaml');
 var router = express.Router();
 //require multer for the file uploads
 var multer = require('multer');
+
+var dateTime = require('node-datetime');
 // set the directory for the uploads to the uploaded to
 
 //define the type of upload multer would be doing and pass in its destination, in our case, its a single file with the name photo
@@ -225,12 +227,17 @@ exports.updateUser = function (req, res) {
 
 // edit userType
 exports.updateUserType = function (req, res) {
-    var userType = req.params.userType.name;
-    var userJson = req.body;
+    var userJson = {
+        userType: {}
+    }
+    userJson["userType"] = req.body.userType
+
+    var name = req.params.name;
+
     db_instance = db.getConnection()
-    db_instance.collection('userType').updateOne(
+    db_instance.collection('users').updateOne(
         { id: name },
-        { $set: userTypeJson }
+        { $set: userJson }
         , function (err, remongo_responses) {
             if (err) {
                 console.log(err);
@@ -500,7 +507,14 @@ exports.deleteAlertingTool = function (req, res) {
                         error: true
                     });
                 }
-                console.log("1 record updated");
+                const util = require('util');
+                const exec = util.promisify(require('child_process').exec);
+
+                async function ls() {
+                    const { stdout, stderr } = await exec('rm -rf ./elastalert/example_rules/pagerduty_rule-' + tenantId + '.yaml');
+                }
+                ls();
+
                 // db_instance.close();
                 return res.status(200).json({
                     message: "record is updated successfully",
@@ -519,7 +533,14 @@ exports.deleteAlertingTool = function (req, res) {
                         error: true
                     });
                 }
-                console.log("1 record updated");
+                const util = require('util');
+                const exec = util.promisify(require('child_process').exec);
+
+                async function ls() {
+                    const { stdout, stderr } = await exec('rm -rf ./elastalert/example_rules/email_rule-' + tenantId + '.yaml');
+                }
+                ls();
+
                 // db_instance.close();
                 return res.status(200).json({
                     message: "record is updated successfully",
@@ -574,32 +595,54 @@ exports.elastAlertPagerDuty = function (req, res) {
     pagerDutyServiceJson = {
         "es_host": "localhost",
         "es_port": 9200,
-        'name': 'Example any rule',
-        'type': "any",
-        'num_events': 1,
-        "timeframe": { "seconds": 4 },
-        "index": "test_alert_" + tenantId,
-        "filter": [{ "term": { "my_data.username": "keminda" } }],
-        "alert": ["pagerduty"],
-        "pagerduty_service_key": tenantJson.pagerduty.pagerdutyservicekey,//98c140832fa642649c71a508035cc44d
-        "pagerduty_client_name": tenantJson.pagerduty.pagerdutyclientname//xops
+        "name": "Example rule testPagerduty",
+        "type": "any",
+        "index": "live_alert_index_" + tenantId,
+        "num_events": 1,
+        "timeframe": {
+            "seconds": 4
+        },
+        "query": {
+            "query_string": {
+                "query": "severity: 1 OR severity: 2"
+            }
+        },
+        "alert": [
+            "pagerduty"
+        ],
+        "alert_subject": "{0}",
+        "alert_subject_args": [
+            "message",
+
+        ],
+        "pagerduty_v2_payload_severity": "Warning",
+        "pagerduty_v2_payload_source": "Xview Alerts",
+        "pagerduty_v2_payload_component": "Xview",
+        "pagerduty_service_key": tenantJson.pagerduty.pagerdutyservicekey,
+        "pagerduty_client_name": tenantJson.pagerduty.pagerdutyclientname,
+        "pagerduty_incident_key": "alert_subject {0}, {1}",
+        "pagerduty_incident_key_args": [
+            "locationCode",
+            "severity"
+        ]
     }
 
+
+
     const data = YAML.stringify(pagerDutyServiceJson);
-    fs.writeFile('/Users/kemindasamaraweera/elastalert/example_rules/test.yaml', data, (err) => {
+
+    fs.writeFile('./elastalert/example_rules/pagerduty_rule-' + tenantId + '.yaml', data, (err) => {
         if (err) throw err;
         else {
             const util = require('util');
             const exec = util.promisify(require('child_process').exec);
 
             async function ls() {
-                const { stdout, stderr } = await exec('ls');
-                console.log('stdout:', stdout);
-                console.log('stderr:', stderr);
+                const { stdout, stderr } = await exec('python -m elastalert.elastalert --verbose  --config ./elastalert/config.yaml');
             }
             ls();
             return res.status(200).json({
-                message: "pagerduty Inserted",
+                message: "email Inserted",
                 error: false
             });
         }
@@ -607,9 +650,22 @@ exports.elastAlertPagerDuty = function (req, res) {
 
 }
 
+function formatDate(date) {
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
+}
+
 exports.elastAlertEmail = function (req, res) {
     var tenantId = req.params.tenantId;
     var tenantJson = req.body;
+
 
     EmailServiceJson = {
         "es_host": "localhost",
@@ -618,33 +674,46 @@ exports.elastAlertEmail = function (req, res) {
         'type': "any",
         'num_events': 1,
         "timeframe": { "seconds": 4 },
-        "index": "alerting_index",
-        "filter": [{ "term": { "my_data.status": "warning" } }],
+        "index": 'live_alert_index_' + tenantId,
+        "query": {
+            "query_string": {
+                "query": "severity: 1 OR severity: 2"
+            }
+        },
         "alert": ["email"],
         "email": [tenantJson.email.emailaddress],
         'smtp_host': tenantJson.email.smtpserver,
         "smtp_port": 465,
         "smtp_ssl": true,
-        "from_addr": 'keminda309821@gmail.com',
-        "smtp_auth_file": 'smtp_auth_file.yaml',	
-        "alert_subject": "[{0}] {1} on {2}",
+        "from_addr": 'xopsalertingservice@gmail.com',
+        "smtp_auth_file": '../smtp_auth_file.yaml',
+        "alert_subject": "{0}",
         "alert_subject_args": [
-            "my_data.status",
-            "my_data.event_type",
-            "my_data.server"
+            "message",
+
         ],
-        "alert_text": "Application: Xops (Xview) Staging,\nTrigger: Service logstash is down on xviews0312,\nTrigger status: PROBLEM,\nTrigger severity: Critical,\nHost: xviews0312 \n"
+        "alert_text": "Comment : {0} \nTrigger : {1} \nmonitoredCIName : {2}  \nLocation : {3} \nSeverity : {4}",
+        "alert_text_type": "alert_text_only",
+        "alert_text_args": [
+            "comments",
+            "trigger",
+            "monitoredCIName",
+            "locationCode",
+            "severity"
+        ]
     }
 
     const data = YAML.stringify(EmailServiceJson);
-    fs.writeFile('./elastalert/example_rules/test.yaml', data, (err) => {
+
+
+    fs.writeFile('./elastalert/example_rules/email_rule-' + tenantId + '.yaml', data, (err) => {
         if (err) throw err;
         else {
             const util = require('util');
             const exec = util.promisify(require('child_process').exec);
 
             async function ls() {
-                const { stdout, stderr } = await exec('python -m elastalert.elastalert --verbose --rule ./elastalert/example_rules/test.yaml --config ./elastalert/config.yaml');
+                const { stdout, stderr } = await exec('python -m elastalert.elastalert --verbose  --config ./elastalert/config.yaml');
             }
             ls();
             return res.status(200).json({
@@ -838,7 +907,9 @@ exports.checkuser = function (req, res) {
 
 exports.getUserList = function (req, res) {
     db_instance = db.getConnection()
-    db_instance.collection("users").find({}).toArray(function (err, remongo_responses) {
+    var tenantId = req.params.tenantId;
+    var query = { tenantId: tenantId };
+    db_instance.collection("users").find(query).toArray(function (err, remongo_responses) {
         if (err) {
             console.log(err);
             return res.status(404).json({
