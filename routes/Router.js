@@ -11,7 +11,7 @@ var router = require('express').Router();
 
 //GET METHODS
 
-router.route('/user/_list').get(api.getUserList);
+router.route('/user/_list/:tenantId').get(api.getUserList);
 router.route('/userbyid/:userId').get(api.getUserById);
 router.route('/users/:tenantId').get(api.getUserByTenantId);
 router.route('/tenant/:tenantId').get(api.getTenantDetailsByTenantID);
@@ -37,7 +37,7 @@ router.route('/deletechart/:chid').delete(api.deleteChartById);
 router.route('/tenant/:tenantId').put(api.updateTenant); 
  
 router.route('/user/:userId').put(api.updateUser);
-router.route('userType/:name').put(api.updateUserType);
+router.route('/userType/:name').put(api.updateUserType);
 
 router.route('/upload').post(api.uploadFiles);
 
@@ -72,8 +72,9 @@ router.route('/incidents/_create').post(alertApi.createIncident);
 router.route('/health_configs/metric_terms/:tenantId').get(healthConfigs.getMetricTerms);
 router.route('/health_configs/perf_indicators/:tenantId').get(healthConfigs.getHealthConfigs);
 router.route('/health_configs/item_status/:tenantId').get(healthConfigs.getItemStatus);
+router.route('/health_configs/configs/perfs/:tenantId').get(healthConfigs.getPerformaceIndicators);
+router.route('/health_configs/configs/items/:tenantId').get(healthConfigs.getItems);
 
-router.route('/health_configs/configs/:tenantId').get(healthConfigs.getItemAndPerf);
 router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.saveItemIndicators);
 
 router.route('/health/:tenantId').get(healthConfigs.getHealth);
