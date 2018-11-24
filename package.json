@@ -42,6 +42,7 @@
     "shortid": "^2.2.8"
   },
   "devDependencies": {
+    "node-datetime": "^2.1.2",
     "nodemon": "^1.18.3"
   },
   "scripts": {

@@ -127,7 +127,10 @@ var storage = multer.diskStorage({
         }
     },
     filename: function (req, file, cb) {
+
+        console.log(req.body)
         if (req.body.type == "banner") {
+           
             cb(null, req.body.id + '_banner.png');
         }
         if (req.body.type == "logo") {
@@ -158,9 +161,7 @@ exports.getUser = function (req, res) {
     if (req.decoded['user']) {
         email = (req.decoded['user']).toLowerCase();
     }
-    // } else {
-    //     email = (req.user.id).toLowerCase();
-    // }
+ 
 
     var adminList = config.admin;
     if (adminList.indexOf(email) > -1) {
