@@ -22,6 +22,33 @@ exports.saveItemIndicators = function (req, res) {
     res.json({ status: "success" });
 };
 
+exports.updateItem = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var itemObj = req.body;
+    console.log(itemObj)
+    esDriver.updateItem(tenantId, itemObj);
+    res.json({ status: "success" });
+};
+
+exports.getItemById = function (req, res) {
+    var tenantId = req.params.tenantId;
+    var perfind = req.body;
+
+    esDriver.getItemIndicator(tenantId, perfind.id,function (resultJson) {
+
+        try {
+         var finalresult =    resultJson.hits.hits[0]._source
+        return res.status(200).json(finalresult);
+        }
+        catch(err){
+            return res.status(500).json(err);
+        }
+      
+       
+    });
+   
+};
+
 exports.getItemStatus = function (req, res) {
     var tenantId = req.params.tenantId;
     esDriver.getItemStatus(tenantId, function (resultJson) {
@@ -62,7 +89,6 @@ exports.getMetricTerms = function (req, res) {
     });
 };
 
-
 exports.getPerformaceIndicators = function (req, res) {
     var tenantId = req.params.tenantId;
     esDriver.getPerformaceIndicators(tenantId, function (resultJson) {
@@ -83,7 +109,7 @@ exports.getPerformaceIndicators = function (req, res) {
         }
          
        catch (err) {
-            console.log(err);
+  
             finalResult.error = true;
             return res.status(500).json(finalResult);
         }
@@ -108,11 +134,11 @@ exports.getItems = function (req, res) {
     try {
         hitsArray.map(function (val) {
            
-            finalResult.result.items.push(val._source.id);
+            finalResult.result.items.push(val._source);
         });
         return res.status(200).json(finalResult);
     } catch (err) {
-        console.log(err);
+ 
         finalResult.error = true;
         return res.status(500).json(finalResult);
     }
@@ -147,7 +173,7 @@ exports.getHealth = function (req, res) {
 
             return res.status(200).json(finalResult);
         } catch (err) {
-            console.log(err);
+    
             finalResult.error = true;
             return res.status(500).json(finalResult);
         }

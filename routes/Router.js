@@ -75,7 +75,10 @@ router.route('/health_configs/item_status/:tenantId').get(healthConfigs.getItemS
 router.route('/health_configs/configs/perfs/:tenantId').get(healthConfigs.getPerformaceIndicators);
 router.route('/health_configs/configs/items/:tenantId').get(healthConfigs.getItems);
 
+
 router.route('/health_configs/item_indicators/:tenantId').post(healthConfigs.saveItemIndicators);
+router.route('/health_configs/item/update/:tenantId').put(healthConfigs.updateItem);
+router.route('/health_configs/item/get/:tenantId').post(healthConfigs.getItemById);
 
 router.route('/health/:tenantId').get(healthConfigs.getHealth);
 
