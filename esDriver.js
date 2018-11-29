@@ -23,6 +23,21 @@ var _update_data = function (_index, _type, _id, message) {
   });
 };
 
+
+var _update_data_doc = function (_index, _type, _id, message) {
+  client.update({
+    index: _index,
+    type: _type,
+    id: _id,
+    body:  {
+      // put the partial document under the `doc` key
+      doc: message
+  }
+}, function (error, response) {
+    console.log(error || response);
+  });
+};
+
 var _read_data = function (_index, _type, query, callback) {
   client.search({
     index: _index,
@@ -138,6 +153,13 @@ module.exports = {
   addItemIndicators: function (tenantId, itemObj) {
     _index_data('item-indicators-' + tenantId, 'configs', itemObj.id, itemObj);
   },
+  updateItem: function (tenantId, itemObj) {
+      var id  = itemObj.id;
+    
+      console.log(id)
+      _update_data_doc('item-indicators-' + tenantId, 'configs',id,itemObj);
+  },
+
   getItemStatus: function (tenantId, callback) {
     var query = { query: { match_all: {} }, size: 100 };
     _read_data('item-status-' + tenantId, 'metrics', query, callback);
